@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}{% endblock %}</title>
+    {% endblock %}
+</head>
+
+<body>
+    <h1>{{self.title() }}</h1>
+    [<a href="flight_admin.j2">Flight Admin</a> | <a href="seat_admin.j2">Seat Admin</a> | <a
+        href="airplane_Admin.j2">Airplane Admin</a> | <a href="airport_admin.j2">Airport Admin</a> | <a
+        href="travelclass_admin.j2">Travel Class Admin</a>]
+        <p>&nbsp;</p>
+    <div id="read">
+        {% block read %}
+        <table border="1" cellpadding="5">
+            <!-- Access data tuple passed from app.py -->
+            {% if data %}
+            <thead>
+                <tr>
+                    <!-- Iterate through each key in the first entry to get the column name -->
+                    {% for key in data[0].keys() %}
+
+                    <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+
+                    <!-- End of this for loop -->
+                    {% endfor %}
+                    {% block new_button%} {% endblock %}
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Now, iterate through every item in data -->{% for item in data %}
+                <tr>
+                    <!-- Then iterate through every key in the current item dictionary -->
+                    {% for key in item.keys() %}
+
+                    <!-- Create a <td> element with the value of that key in it -->
+                    <td> {{item[key]}} </td>
+                    {% endfor %}
+
+                    <!-- Create our edit/delete buttons -->
+                    {% block update_button scoped %} {{item}} {% endblock %}
+                    {% block delete_button scoped %} {{item}} {% endblock %}
+
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+        {% endblock %}
+    </div>
+    <p>&nbsp;</p>
+    <div id="create">{% block create %}{% endblock %}</div>
+    <p>&nbsp;</p>
+    <div id="update">{% block update %}{% endblock %}</div>
+    <p>&nbsp;</p>
+    <div id="delete">{% block delete %}{% endblock %}</div>
+    <p>&nbsp;</p>
+    <div id="footer">
+        {% block footer %}
+        Group 3
+        {% endblock %}
+    </div>
+</body>
+
+</html>
