@@ -59,32 +59,32 @@
 <form id="editFlight" action="/edit_people/{{data[0].id}}" method="post">
     <legend><strong>Update Flight</strong></legend>
     <fieldset>
-        <p>Flight Number: {{data[0].Flight_ID}}</p>
+        <p>Flight Number: {{data[0].Flight}}</p>
         <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
         <label for="departure">Departure Date/Time:</label>
         <input type="text" class="form-control" id="departure" name="departure"
-            pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" value="{{data[0].Departure_Date_Time}}" required>
+            pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" value="{{data[0].Departure}}" required>
 
         <label for="arrival">Departure Date/Time:</label>
         <input type="text" class="form-control" id="arrival" name="arrival"
-            pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" value="{{data[0].Arrival_Date_Time}}" required>
+            pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" value="{{data[0].Arrival}}" required>
 
         <label for="origin">Origin Airport:</label>
-        <select class="form-control" id="origin" name="origin" pattern="[A-Za-z]{1,}" placeholder="" required>
+        <select class="form-control" id="origin" name="origin" pattern="[A-Za-z]{1,}" placeholder="{{data[0].Origin}}" required>
             <option value="0">&nbsp;</option>
             <option value="1">MDT</option>
             <option value="2">LHR</option>
             <option value="3">CAI</option>
         </select>
         <label for="destination">Destination Airport:</label>
-        <select class="form-control" id="destination" name="destination" pattern="[A-Za-z]{1,}" placeholder="" required>
+        <select class="form-control" id="destination" name="destination" pattern="[A-Za-z]{1,}" placeholder="{{data[0].Destination}}" required>
             <option value="0">&nbsp;</option>
             <option value="1">MDT</option>
             <option value="2">LHR</option>
             <option value="3">CAI</option>
         </select>
         <label for="airplane">Airplane Type:</label>
-        <select class="form-control" id="airplane" name="airplane" pattern="[A-Za-z]{1,}" placeholder="" required>
+        <select class="form-control" id="airplane" name="airplane" pattern="[A-Za-z]{1,}" placeholder="{{data[0].Airplane}}" required>
             <option value="0">&nbsp;</option>
             <option value="1">Boeing 737</option>
             <option value="2">Airbus A320</option>
@@ -102,11 +102,11 @@
     <fieldset class="fields">
         <p>Are you sure you wish to delete this flight?</p>
         <input type="hidden" name="flightID" id="deleteFlightID" value="{{data[0].Flight_ID}}">
-        <label><strong>ID: </strong></label> {{data[0].Flight_ID}}
-        <label> <strong>Departure: </strong> </label> {{data[0].Departure_Date_Time}}
-        <label> <strong>Arrival: </strong> </label> {{data[0].Arrival_Date_Time}}
-        <label> <strong>Origin: </strong> </label> {{data[0].Origin_Airport}}
-        <label> <strong>Destination: </strong> </label> {{data[0].Destination_Airport}}
+        <label><strong>ID: </strong></label> {{data[0].Flight}}
+        <label> <strong>Departure: </strong> </label> {{data[0].Departure}}
+        <label> <strong>Arrival: </strong> </label> {{data[0].Arrival}}
+        <label> <strong>Origin: </strong> </label> {{data[0].Origin}}
+        <label> <strong>Destination: </strong> </label> {{data[0].Destination}}
     </fieldset>
     <input class="btn" type="submit" id="DeleteFlight" value="Delete Flight">
     <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onclick="browsePeople()" #}
