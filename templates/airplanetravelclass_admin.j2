@@ -1,0 +1,87 @@
+{% extends "base_admin.j2" %}
+{% block title %}Airplane Travel Class Admin{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    .important {
+        color: #06407a;
+    }
+</style>
+{% endblock %}
+{% block read %}{{ super() }}{% endblock %}
+{% block new_button%}<th><a href="#" onClick="newAirplaneTC()">Add New</a> </th> {% endblock %}
+{% block update_button%}<td><a href="edit_airplane/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
+{% block delete_button%}<td><a href="delete_airplane/{{item.id}}" class="btn btn-default">Delete</a></td>{% endblock %}
+
+{% block create %}
+<form id="createAirplaneTC" action="/airplane-admin" method="post">
+    <legend><strong>Add Airplane Travel Class</strong></legend>
+    <fieldset>
+        {# Once the backend is built the display mechanism will change to incorporate dynamic data, but the display
+        style shown here will not change #}
+        <label for="airplane_type">Airplane Type:</label>
+        <select class="form-control" id="airplane_type" name="airplane_type" pattern="[A-Za-z]{1,}" placeholder=""
+            required>
+            <option value="0">&nbsp;</option>
+            <option value="1">Boeing 737</option>
+            <option value="2">Airbus A320</option>
+            <option value="3">Cessna 172</option>
+        </select>
+        {# Once the backend is built the display mechanism will change to incorporate dynamic data, but the display
+        style shown here will not change #}
+        <label for="travel_class">Travel Class:</label>
+        <select class="form-control" id="travel_class" name="travel_class" pattern="[A-Za-z]{1,}" placeholder=""
+            required>
+            <option value="0">&nbsp;</option>
+            <option value="1">First</option>
+            <option value="2">Business</option>
+            <option value="3">Economy</option>
+        </select>
+
+        <label for="travel_class_capacity">Capacity:</label>
+        <input type="text" class="form-control" id="travel_class_capacity" name="travel_class_capacity"
+            pattern="^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*(?:\.[0-9]{2})?$" placeholder="{{data[0].Travel_Class_Cost}}"
+            required>
+    </fieldset>
+
+    <!-- Create 'Add Airplane Travel Class' and 'Cancel' buttons -->
+    <input type="submit" value="Add Airplane Travel Class" name="Add_AirplaneTC" class="btn btn-primary"
+        style="margin:.5rem;">
+    <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+
+
+</form>
+{% endblock %}
+
+{% block update %}
+<form id="editAirplaneTC" action="/edit_people/{{data[0].id}}" method="post">
+    <legend><strong>Update Airplane Travel Class</strong></legend>
+    <fieldset>
+        <input type="hidden" value="{{data[0].Airplane_Travel_Classes_ID}}" class="form-control" id="airplaneID" name="airplaneID"
+            required>
+        <p>Airplane Type: {{data[0].Airplane_Type}} Travel Class: {{data[0].Travel_Class_Name}}</p>
+        <label for="travel_class_capacity">Capacity:</label>
+        <input type="text" class="form-control" id="travel_class_capacity" name="travel_class_capacity"
+            pattern="^[0-9]*$" placeholder="{{data[0].Travel_Class_Capacity}}" required>
+
+    </fieldset>
+    <input class="btn" type="submit" id="UpdateAirplaneTravelClass" value="Update Airplane Travel Class">
+    <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onClick="browsePeople()" #}
+</form>
+{% endblock %}
+
+{% block delete %}
+<form method="POST" id="deleteAirplaneTravelClass">
+    <legend><strong>Delete Airplane Travel Class</strong></legend>
+    <fieldset class="fields">
+        <p>Are you sure you wish to delete this airplane travel class?</p>
+        <input type="hidden" name="airplanetcID" id="deleteAirplaneTCID" value="{{data[0].Airplane_Travel_Classes_ID}}">
+        <label><strong>ID:</strong></label> {{data[0].Airplane_Travel_Classes_ID}}
+        <label> <strong>Airplane Type</strong> </label> {{data[0].Airplane_Type}}
+        <label> <strong>Travel Class</strong> </label> {{data[0].Travel_Class_Name}}
+        <label> <strong>Capacity</strong> </label> {{data[0].Travel_Class_Capacity}}
+    </fieldset>
+    <input class="btn" type="submit" id="DeleteAirplaneTC" value="Delete Airplane Travel Class">
+    <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onclick="browsePeople()" #}
+</form>
+{% endblock %}

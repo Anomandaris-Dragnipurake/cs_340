@@ -57,15 +57,15 @@
 {% endblock %}
 
 {% block delete %}
-  <form method="POST" id="deletePerson">
+  <form method="POST" id="deleteAirport">
       <legend><strong>Delete Airport</strong></legend>
           <fieldset class="fields">
           <p>Are you sure you wish to delete this airport?</p>
-          <input type="hidden" name="personID" id="deletepersonID" value="{{data[0].Airport_ID}}">
+          <input type="hidden" name="airportID" id="deleteAirportID" value="{{data[0].Airport_ID}}">
           <label><strong>ID:</strong></label> {{data[0].Airport_ID}}
           <label> <strong>Name</strong> </label> {{data[0].Airport_Name}}         
     </fieldset>
-    <input class="btn" type="submit" id="DeletePerson" value="Delete Person">
+    <input class="btn" type="submit" id="DeleteAirport" value="Delete Airport">
     <input class="btn" type="button" value="Cancel"  style="margin:.5rem;">{# onclick="browsePeople()" #}
   </form> 
 {% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base_admin.j2" %}
+{% block title %}Seat Admin{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+    .important {
+        color: #06407a;
+    }
+</style>
+{% endblock %}
+{% block read %}
+
+<label for="flightNumber">Flight Number:</label>
+        <select class="form-control" id="flightNumber" name="flightNumber" pattern="" placeholder="" required>
+            <option value="0">&nbsp;</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+        </select>
+{{ super() }}
+{% endblock %}
+{% block new_button%}{% endblock %}
+{% block update_button%}<td><a href="edit_seat/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
+{% block delete_button%}{% endblock %}
+{% block update %}
+<form id="editSeat" action="/edit_seat/{{data[0].id}}" method="post">
+    <legend><strong>Update Seat</strong></legend>
+    <fieldset>
+        <input type="hidden" value="{{data[0].Seat_ID}}" class="form-control" id="seatID" name="seatID" required>
+
+        <p>Seat Number: {{data[0].Seat_Number}}</p>
+
+        <label for="available">Available:</label>
+        <select class="form-control" id="available" name="available" pattern="" placeholder="" required>
+            <option value="3">&nbsp;</option>
+            <option value="0">False</option>
+            <option value="1">True</option>
+        </select>
+
+        <label for="passenger_name">Passenger Name:</label>
+        <input type="text" class="form-control" id="passenger_name" name="passenger_name" pattern="[A-Za-z]{1,}"
+            placeholder="{{data[0].Passenger_Name}}">
+    </fieldset>
+    <input class="btn" type="submit" id="Update Seat" value="Update Seat">
+    <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onClick="browsePeople()" #}
+</form>
+{% endblock %}

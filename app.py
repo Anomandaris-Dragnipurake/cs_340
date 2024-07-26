@@ -14,13 +14,16 @@ def root():
     return render_template("main.j2")
 
 @app.route('/seat-admin')
-def seat_selection():
-    return render_template("seat_admin.j2")
+def seat_admin():
+    query = "SELECT * FROM Seats WHERE Flight_ID = 1;" # Replace with true query later
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    return render_template("seat_admin.j2", data=results)
 
 
 @app.route('/flight-admin')
 def flight_admin():
-    query = "SELECT * FROM Flights;" # Replace with query to return flights
+    query = "SELECT * FROM Flights;" # Replace with true query later
     cursor = db.execute_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
     return render_template("flight_admin.j2", data=results)
@@ -28,7 +31,10 @@ def flight_admin():
 
 @app.route('/airplane-admin')
 def airplane_admin():
-    return render_template("airplane_admin.j2")
+    query = "SELECT * FROM Airplane_Types;" # Replace with true query later
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    return render_template("airplane_admin.j2", data=results)
 
 
 @app.route('/airport-admin')
@@ -41,7 +47,17 @@ def airport_admin():
 
 @app.route('/travelclass-admin')
 def travelclass_admin():
-    return render_template("travelclass_admin.j2")
+    query = "SELECT * FROM Travel_Classes;" # Replace with true query later
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    return render_template("travelclass_admin.j2", data=results)
+
+@app.route('/airplanetravelclass-admin')
+def airplanetravelclass_admin():
+    query = "SELECT * FROM Airplane_Travel_Classes;" # Replace with true query later
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    return render_template("airplanetravelclass_admin.j2", data=results)
 
 # Listener
 
