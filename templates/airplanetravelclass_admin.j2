@@ -74,7 +74,7 @@ endblock %}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="UpdateAirplaneTravelClass" value="Update Airplane Travel Class">
-        <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onClick="browsePeople()" #}
+        <input class="btn" type="button" value="Cancel" ">{# onClick="browsePeople()" #}
     </div>
 </form>
 {% endblock %}
@@ -85,14 +85,14 @@ endblock %}
     <fieldset class="fields">
         <p>Are you sure you wish to delete this airplane travel class?</p>
         <input type="hidden" name="airplanetcID" id="deleteAirplaneTCID" value="{{data[0].Airplane_Travel_Classes_ID}}">
-        <label><strong>ID:</strong></label> {{data[0].Airplane_Travel_Classes_ID}}
-        <label> <strong>Airplane Type</strong> </label> {{data[0].Airplane}}
-        <label> <strong>Travel Class</strong> </label> {{data[0].Class}}
-        <label> <strong>Capacity</strong> </label> {{data[0].Capacity}}
+        <label>ID:</label> {{data[0].Airplane_Travel_Classes_ID}}
+        <label> Airplane Type </label> {{data[0].Airplane}}
+        <label> Travel Class </label> {{data[0].Class}}
+        <label> Capacity </label> {{data[0].Capacity}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteAirplaneTC" value="Delete Airplane Travel Class">
-        <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onclick="browsePeople()" #}
+        <input class="btn" type="button" value="Cancel" ">{# onclick="browsePeople()" #}
     </div>
 </form>
 {% endblock %}

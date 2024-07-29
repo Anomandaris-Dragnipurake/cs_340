@@ -14,14 +14,14 @@
 </style>
 {% endblock %}
 {% block read %}{{ super() }}{% endblock %}
-{% block new_button%}<th><a href="#" onClick="newAirport()">Add New</a> </th> {% endblock %}
+{% block new_button%}<th><a href="#" onClick="newAirport()">New</a> </th> {% endblock %}
 {% block update_button%}<td><a href="edit_airport/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
 {% block delete_button%}<td><a href="delete_airport/{{item.id}}" class="btn btn-default">Delete</a></td>{% endblock %}
 
 {% block create %}
 <form id="createAirport" action="/airport-admin" method="post">
-    <legend><strong>Add Airport</strong></legend>
-    <fieldset>
+    <h1 class="title">Add Airport</h1>
+    <fieldset class="fields">
         <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
         <label for="name">Name:</label>
         <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
@@ -34,16 +34,18 @@
             required>
     </fieldset>
 
-    <!-- Create 'Add Airport' and 'Cancel' buttons -->
-    <input type="submit" value="Add Airport" name="Add_Airport" class="btn btn-primary" style="margin:.5rem;">
-    <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+    <div class="btnBlock">
+        <!-- Create 'Add Airport' and 'Cancel' buttons -->
+        <input type="submit" value="Add Airport" name="Add_Airport" class="btn btn-primary" ">
+        <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+    </div>
 </form>
 {% endblock %}
 
 {% block update %}
 <form id="editAirport" action="/edit_people/{{data[0].id}}" method="post">
-    <legend><strong>Update Airport</strong></legend>
-    <fieldset>
+    <h1 class="title">Update Airport</h1>
+    <fieldset class="fields">
         <input type="hidden" value="{{data[0].Airport_ID}}" class="form-control" id="airportID" name="airportID" required>
         
         <label for="name">Name:</label>
@@ -56,21 +58,25 @@
         <label for="country">Country:</label>
         <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]{1,}" placeholder="{{data[0].Airport_Country}}" required>
     </fieldset>
-    <input class="btn" type="submit" id="Update Airport" value="Update Airport">
-    <input class="btn" type="button" value="Cancel"  style="margin:.5rem;">{# onClick="browsePeople()" #}
+    <div class="btnBlock">
+        <input class="btn" type="submit" id="Update Airport" value="Update Airport">
+        <input class="btn" type="button" value="Cancel"  ">{# onClick="browsePeople()" #}
+    </div>
 </form>
 {% endblock %}
 
 {% block delete %}
   <form method="POST" id="deleteAirport">
-      <legend><strong>Delete Airport</strong></legend>
+      <h1 class="title">Delete Airport</h1>
           <fieldset class="fields">
           <p>Are you sure you wish to delete this airport?</p>
           <input type="hidden" name="airportID" id="deleteAirportID" value="{{data[0].Airport_ID}}">
-          <label><strong>ID:</strong></label> {{data[0].Airport_ID}}
-          <label> <strong>Name</strong> </label> {{data[0].Airport_Name}}         
+          <label>ID:</label> {{data[0].Airport_ID}}
+          <label>Name: </label> {{data[0].Airport_Name}}         
     </fieldset>
-    <input class="btn" type="submit" id="DeleteAirport" value="Delete Airport">
-    <input class="btn" type="button" value="Cancel"  style="margin:.5rem;">{# onclick="browsePeople()" #}
+    <div class="btnBlock">
+        <input class="btn" type="submit" id="DeleteAirport" value="Delete Airport">
+        <input class="btn" type="button" value="Cancel"  ">{# onclick="browsePeople()" #}
+    </div>
   </form> 
 {% endblock %}

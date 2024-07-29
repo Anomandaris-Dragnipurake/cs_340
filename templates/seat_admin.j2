@@ -1,8 +1,8 @@
-{# The following HTML structure is derived from the starter app code  for cs_340 
-    Date 7/25/2024
-    Derived from the example structure of Jinja
-    https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
-  
+{# The following HTML structure is derived from the starter app code for cs_340
+Date 7/25/2024
+Derived from the example structure of Jinja
+https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
+
 {% extends "base_admin.j2" %}
 {% block title %}Seat Admin{% endblock %}
 {% block head %}
@@ -14,23 +14,26 @@
 </style>
 {% endblock %}
 {% block read %}
-
-<label for="flightNumber">Flight Number:</label>
-        <select class="form-control" id="flightNumber" name="flightNumber" pattern="" placeholder="" required>
-            <option value="0">&nbsp;</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-        </select>
-{{ super() }}
+<div>
+    <label for="flightNumber">Flight Number:</label>
+    <select class="form-control" id="flightNumber" name="flightNumber" pattern="" placeholder="" required>
+        <option value="0">&nbsp;</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
+</div>
+<div>
+    {{ super() }}
+</div>
 {% endblock %}
 {% block new_button%}{% endblock %}
 {% block update_button%}<td><a href="edit_seat/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
 {% block delete_button%}{% endblock %}
 {% block update %}
 <form id="editSeat" action="/edit_seat/{{data[0].id}}" method="post">
-    <legend><strong>Update Seat</strong></legend>
-    <fieldset>
+    <h1 class="title">Update Seat</h1>
+    <fieldset class="fields">
         <input type="hidden" value="{{data[0].Seat_ID}}" class="form-control" id="seatID" name="seatID" required>
 
         <p>Seat Number: {{data[0].Seat_Number}}</p>
@@ -46,7 +49,9 @@
         <input type="text" class="form-control" id="passenger_name" name="passenger_name" pattern="[A-Za-z]{1,}"
             placeholder="{{data[0].Passenger_Name}}">
     </fieldset>
-    <input class="btn" type="submit" id="Update Seat" value="Update Seat">
-    <input class="btn" type="button" value="Cancel" style="margin:.5rem;">{# onClick="browsePeople()" #}
+    <div class="btnBlock">
+        <input class="btn" type="submit" id="Update Seat" value="Update Seat">
+        <input class="btn" type="button" value="Cancel">{# onClick="browsePeople()" #}
+    </div>
 </form>
 {% endblock %}
