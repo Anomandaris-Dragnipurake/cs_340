@@ -1,0 +1,121 @@
+/* Elements */
+body {
+  background-color: rgb(185, 180, 180);
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  background-color: rgb(131, 127, 127);
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  padding: 10px;
+  display: inline;
+}
+
+nav a {
+  color: navy;
+  text-decoration: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: midnightblue;
+}
+
+a:hover {
+  color: maroon;
+}
+
+a:active {
+  color: grey;
+}
+
+label {
+  color: navy;
+  padding: 5px;
+}
+legend {
+}
+/* Classes */
+.title {
+  color: navy;
+  margin: auto;
+  text-align: center;
+  font-weight: Bold;
+}
+
+.readTable {
+  display: table;
+  border-collapse: collapse;
+  box-sizing: border-box;
+  text-indent: initial;
+  border-spacing: 2px;
+  border-color: gray;
+  margin: 1%;
+}
+
+.readTH {
+  display: table-cell;
+  vertical-align: inherit;
+  font-weight: bold;
+  text-align: -internal-center;
+  color: navy;
+}
+
+.readTD {
+  display: table-cell;
+  vertical-align: inherit;
+  text-align: center;
+  color: navy;
+}
+.readBtns {
+  display: table-cell;
+  vertical-align: inherit;
+  text-align: center;
+}
+.btnBlock{
+    display: flex;
+    justify-content: center;
+}
+.btn {
+    color: navy;
+    background: rgba(0,0,0,0);
+    margin: 1%;
+}
+.fields{
+    color: navy;
+    border: 0;
+    margin: auto;
+    text-align: center;
+}
+.form-control{
+    color: navy;
+    background: rgba(0,0,0,0.1);
+}
+.navLinks {
+  color: navy;
+}
+
+/* IDs */
+#readDiv {
+  display: flex;
+  justify-content: center;
+}
+
+#footer {
+  background-color: rgb(131, 127, 127);
+  margin: auto;
+  border: 2%;
+}

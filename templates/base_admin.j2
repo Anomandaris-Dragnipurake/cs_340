@@ -1,28 +1,33 @@
-{# The following HTML structure is derived from the starter app code  for cs_340 
-    Date 7/25/2024
-    Derived from the example structure of Jinja
-    https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
-    
+{# The following HTML structure is derived from the starter app code for cs_340
+Date 7/25/2024
+Derived from the example structure of Jinja
+https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     {% block head %}
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="static/css/style.css" />
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
 
 <body>
-    <h1>{{self.title() }}</h1>
-    [<a href="flight-admin">Flight Admin</a> | <a href="seat-admin">Seat Admin</a> | <a
-        href="airplane-admin">Airplane Admin</a> | <a href="airport-admin">Airport Admin</a> | <a
-        href="travelclass-admin">Travel Class Admin</a>| <a
-        href="airplanetravelclass-admin">Airplane Travel Class Admin</a>]
-        <p>&nbsp;</p>
-    <div id="read">
+    <h1 class="title">{{self.title() }}</h1>
+    <nav>
+        <ul>
+            <li><a class="navLinks" href="flight-admin">Flight Admin</a></li>
+            <li><a class="navLinks" href="seat-admin">Seat Admin</a></li>
+            <li><a class="navLinks" href="airplane-admin">Airplane Admin</a></li>
+            <li><a class="navLinks" href="airport-admin">Airport Admin</a></li>
+            <li><a class="navLinks" href="travelclass-admin">Travel Class Admin</a></li>
+            <li><a class="navLinks" href="airplanetravelclass-admin">Airplane Travel Class Admin</a></li>
+        </ul>
+    </nav>
+    <div id="readDiv">
         {% block read %}
-        <table border="1" cellpadding="5">
+        <table class="readTable" border="1" cellpadding="5">
             <!-- Access data tuple passed from app.py -->
             {% if data %}
             <thead>
@@ -31,7 +36,7 @@
                     {% for key in data[0].keys() %}
 
                     <!-- Create a <th> tag with the key inside of it, this will be our header row -->
-                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                    <th class="readTH" scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
 
                     <!-- End of this for loop -->
                     {% endfor %}
@@ -45,7 +50,7 @@
                     {% for key in item.keys() %}
 
                     <!-- Create a <td> element with the value of that key in it -->
-                    <td> {{item[key]}} </td>
+                    <td class="readTD"> {{item[key]}} </td>
                     {% endfor %}
 
                     <!-- Create our edit/delete buttons -->
@@ -59,16 +64,16 @@
         </table>
         {% endblock %}
     </div>
-    <p>&nbsp;</p>
+
     <div id="create">{% block create %}{% endblock %}</div>
-    <p>&nbsp;</p>
+
     <div id="update">{% block update %}{% endblock %}</div>
-    <p>&nbsp;</p>
+
     <div id="delete">{% block delete %}{% endblock %}</div>
-    <p>&nbsp;</p>
+
     <div id="footer">
         {% block footer %}
-        Group 3
+        Group 3: Andrew Chi & Eric McElhinny
         {% endblock %}
     </div>
 </body>
