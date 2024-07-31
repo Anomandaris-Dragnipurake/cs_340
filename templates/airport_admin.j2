@@ -1,8 +1,8 @@
-{# The following HTML structure is derived from the starter app code  for cs_340 
-    Date 7/25/2024
-    Derived from the example structure of Jinja
-    https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
-    
+{# The following HTML structure is derived from the starter app code for cs_340
+Date 7/25/2024
+Derived from the example structure of Jinja
+https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
+
 {% extends "base_admin.j2" %}
 {% block title %}Airport Admin{% endblock %}
 {% block head %}
@@ -37,7 +37,7 @@
     <div class="btnBlock">
         <!-- Create 'Add Airport' and 'Cancel' buttons -->
         <input type="submit" value="Add Airport" name="Add_Airport" class="btn btn-primary" ">
-        <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+        <input class=" btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
     </div>
 </form>
 {% endblock %}
@@ -46,37 +46,38 @@
 <form id="editAirport" action="/edit_people/{{data[0].id}}" method="post">
     <h1 class="title">Update Airport</h1>
     <fieldset class="fields">
-        <input type="hidden" value="{{data[0].Airport_ID}}" class="form-control" id="airportID" name="airportID" required>
-        
+        <input type="hidden" value="{{data[0].Airport_ID}}" class="form-control" id="airportID" name="airportID"
+            required>
+
         <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}"placeholder="{{data[0].Airport_Name}}" required>
+        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}"
+            placeholder="{{data[0].Airport_Name}}" required>
 
         <label for="city">City:</label>
         <input type="text" class="form-control" id="city" name="city" pattern="[A-Za-z]{1,}"
             placeholder="{{data[0].Airport_City}}" required>
 
         <label for="country">Country:</label>
-        <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]{1,}" placeholder="{{data[0].Airport_Country}}" required>
+        <input type="text" class="form-control" id="country" name="country" pattern="[A-Za-z]{1,}"
+            placeholder="{{data[0].Airport_Country}}" required>
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="Update Airport" value="Update Airport">
-        <input class="btn" type="button" value="Cancel"  ">{# onClick="browsePeople()" #}
-    </div>
+        <input class="btn" type="button" value="Cancel" ">{# onClick=" browsePeople()" #} </div>
 </form>
 {% endblock %}
 
 {% block delete %}
-  <form method="POST" id="deleteAirport">
-      <h1 class="title">Delete Airport</h1>
-          <fieldset class="fields">
-          <p>Are you sure you wish to delete this airport?</p>
-          <input type="hidden" name="airportID" id="deleteAirportID" value="{{data[0].Airport_ID}}">
-          <label>ID:</label> {{data[0].Airport_ID}}
-          <label>Name: </label> {{data[0].Airport_Name}}         
+<form method="POST" id="deleteAirport">
+    <h1 class="title">Delete Airport</h1>
+    <fieldset class="fields">
+        <p>Are you sure you wish to delete this airport?</p>
+        <input type="hidden" name="airportID" id="deleteAirportID" value="{{data[0].Airport_ID}}">
+        <label>ID:</label> {{data[0].Airport_ID}}
+        <label>Name: </label> {{data[0].Airport_Name}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteAirport" value="Delete Airport">
-        <input class="btn" type="button" value="Cancel"  ">{# onclick="browsePeople()" #}
-    </div>
-  </form> 
+        <input class="btn" type="button" value="Cancel" ">{# onclick=" browsePeople()" #} </div>
+</form>
 {% endblock %}
