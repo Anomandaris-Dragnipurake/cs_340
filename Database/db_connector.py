@@ -14,7 +14,7 @@ import os
 host = 'localhost'
 user = 'root'    
 passwd = 'CooperSQL1*'                        
-db = 'cs340_mcelhine'
+db = 'step3final'
 
 def connect_to_database(host = host, user = user, passwd = passwd, db = db):
     '''

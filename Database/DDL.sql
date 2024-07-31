@@ -1,3 +1,4 @@
+-- Active: 1720982518894@@127.0.0.1@3306@step3final
 -- SQLBook: Code
 -- -----------------------------------------------------
 -- Group 3 Airplane Reservation System
@@ -7,233 +8,203 @@
 SET AUTOCOMMIT = 0;
 
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
-
-SET
-    @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS,
-    FOREIGN_KEY_CHECKS = 0;
-
-SET
-    @OLD_SQL_MODE = @@SQL_MODE,
-    SQL_MODE = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 -- -----------------------------------------------------
--- Schema cs340_mcelhine
+-- Table `Airports`
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `cs340_mcelhine` DEFAULT CHARACTER SET utf8;
+DROP TABLE IF EXISTS `Airports`;
 
-USE `cs340_mcelhine`;
-
--- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Airports`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Airports`;
-
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Airports` (
+CREATE TABLE IF NOT EXISTS `Airports` (
     `Airport_ID` INT NOT NULL AUTO_INCREMENT,
-    `Airport_Name` VARCHAR(100) NULL,
-    `Airport_City` VARCHAR(100) NULL,
-    `Airport_Country` VARCHAR(100) NULL,
+    `Airport_Name` VARCHAR(100) NOT NULL,
+    `Airport_City` VARCHAR(100) NOT NULL,
+    `Airport_Country` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`Airport_ID`)
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Airports` (
-        `Airport_Name`,
-        `Airport_City`,
-        `Airport_Country`
-    )
-VALUES (
-        "MDT",
-        "Harrisburg",
-        "United States"
-    ),
-    (
-        "LGA",
-        "New York",
-        "United States"
-    ),
-    (
-        "LHR",
-        "London",
-        "United Kingdom"
-    ),
+INSERT INTO `Airports` (`Airport_Name`, `Airport_City`, `Airport_Country`)
+VALUES 
+    ("MDT", "Harrisburg", "United States"),
+    ("LGA", "New York", "United States"),
+    ("LHR", "London", "United Kingdom"),
     ("HND", "Tokyo", "Japan"),
     ("CAI", "Cairo", "Egypt");
 
 -- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Airplane_Types`
+-- Table `Airplane_Types`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Airplane_Types`;
+DROP TABLE IF EXISTS `Airplane_Types`;
 
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Airplane_Types` (
+CREATE TABLE IF NOT EXISTS `Airplane_Types` (
     `Airplane_Type_ID` INT NOT NULL AUTO_INCREMENT,
     `Airplane_Type` VARCHAR(100) NOT NULL,
     PRIMARY KEY (`Airplane_Type_ID`)
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Airplane_Types` (`Airplane_Type`)
-VALUES ("Boeing 737"),
+INSERT INTO `Airplane_Types` (`Airplane_Type`)
+VALUES 
+    ("Boeing 737"),
     ("Airbus A320"),
     ("Bombardier CRJ"),
     ("Cessna 172"),
     ("Boeing 747");
--- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Flights`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Flights`;
 
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Flights` (
+-- -----------------------------------------------------
+-- Table `Flights`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Flights`;
+
+CREATE TABLE IF NOT EXISTS `Flights` (
     `Flight_ID` INT NOT NULL AUTO_INCREMENT,
-    `Departure_Date_Time` DATETIME NULL,
-    `Arrival_Date_Time` DATETIME NULL,
+    `Departure_Date_Time` DATETIME NOT NULL,
+    `Arrival_Date_Time` DATETIME NOT NULL,
     `Origin_Airport_ID` INT NOT NULL,
     `Destination_Airport_ID` INT NOT NULL,
     `Airplane_Type_ID` INT NOT NULL,
     PRIMARY KEY (`Flight_ID`),
-    INDEX `fk_Flights_Airports1_idx` (`Origin_Airport_ID` ASC) VISIBLE,
-    INDEX `fk_Flights_Airports2_idx` (`Destination_Airport_ID` ASC) VISIBLE,
-    INDEX `fk_Flights_Airplane_Type1_idx` (`Airplane_Type_ID` ASC) VISIBLE,
-    CONSTRAINT `fk_Flights_Airports1` FOREIGN KEY (`Origin_Airport_ID`) REFERENCES `cs340_mcelhine`.`Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT `fk_Flights_Airports2` FOREIGN KEY (`Destination_Airport_ID`) REFERENCES `cs340_mcelhine`.`Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT `fk_Flights_Airplane_Type1` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `cs340_mcelhine`.`Airplane_Types` (`Airplane_Type_ID`) ON DELETE RESTRICT ON UPDATE CASCADE
+    INDEX `fk_Flights_Origin_Airport_idx` (`Origin_Airport_ID` ASC) VISIBLE,
+    INDEX `fk_Flights_Destination_Airport_idx` (`Destination_Airport_ID` ASC) VISIBLE,
+    INDEX `fk_Flights_Airplane_Type_idx` (`Airplane_Type_ID` ASC) VISIBLE,
+    CONSTRAINT `fk_Flights_Origin_Airport` FOREIGN KEY (`Origin_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Flights_Destination_Airport` FOREIGN KEY (`Destination_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Flights_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Flights` (
-        `Departure_Date_Time`,
-        `Arrival_Date_Time`,
-        `Origin_Airport_ID`,
-        `Destination_Airport_ID`,
-        `Airplane_Type_ID`
-    )
-VALUES (
-        '2024-07-16 08:00:00',
-        '2024-07-16 20:00:00',
-        2,
-        3,
-        1
-    ),
-    (
-        '2024-07-16 09:00:00',
-        '2024-07-16 20:00:00',
-        3,
-        4,
-        2
-    ),
-    (
-        '2024-07-16 10:00:00',
-        '2024-07-16 21:00:00',
-        4,
-        3,
-        3
-    ),
-    (
-        '2024-07-16 11:00:00',
-        '2024-07-16 22:00:00',
-        2,
-        5,
-        3
-    ),
-    (
-        '2024-07-16 12:00:00',
-        '2024-07-17 00:00:00',
-        1,
-        5,
-        5
-    );
+INSERT INTO `Flights` (`Departure_Date_Time`, `Arrival_Date_Time`, `Origin_Airport_ID`, `Destination_Airport_ID`, `Airplane_Type_ID`)
+VALUES 
+    ('2024-07-16 08:00:00', '2024-07-16 20:00:00', 
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "LGA"),
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "LHR"),
+        (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 737")),
+    ('2024-07-16 09:00:00', '2024-07-16 20:00:00', 
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "LHR"),
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "HND"),
+        (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Airbus A320")),
+    ('2024-07-16 10:00:00', '2024-07-16 21:00:00', 
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "HND"),
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "LHR"),
+        (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Bombardier CRJ")),
+    ('2024-07-16 11:00:00', '2024-07-16 22:00:00', 
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "LGA"),
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "CAI"),
+        (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Bombardier CRJ")),
+    ('2024-07-16 12:00:00', '2024-07-17 00:00:00', 
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "MDT"),
+        (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "CAI"),
+        (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"));
 
 -- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Travel_Classes`
+-- Table `Travel_Classes`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Travel_Classes`;
+DROP TABLE IF EXISTS `Travel_Classes`;
 
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Travel_Classes` (
+CREATE TABLE IF NOT EXISTS `Travel_Classes` (
     `Travel_Class_ID` INT NOT NULL AUTO_INCREMENT,
-    `Travel_Class_Name` VARCHAR(100) NULL,
-    `Travel_Class_Cost` DECIMAL(20, 2) NULL,
+    `Travel_Class_Name` VARCHAR(100) NOT NULL,
+    `Travel_Class_Cost` DECIMAL(20, 2) NOT NULL,
     PRIMARY KEY (`Travel_Class_ID`)
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Travel_Classes` (
-        `Travel_Class_Name`,
-        `Travel_Class_Cost`
-    )
-VALUES ("First", 100),
-    ("Business", 50),
-    ("Economy", 10);
+INSERT INTO `Travel_Classes` (`Travel_Class_Name`, `Travel_Class_Cost`)
+VALUES 
+    ("First", 100.00),
+    ("Business", 50.00),
+    ("Economy", 10.00);
 
 -- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Seats`
+-- Table `Seats`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Seats`;
+DROP TABLE IF EXISTS `Seats`;
 
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Seats` (
+CREATE TABLE IF NOT EXISTS `Seats` (
     `Seat_ID` INT NOT NULL AUTO_INCREMENT,
     `Travel_Class_ID` INT NOT NULL,
     `Flight_ID` INT NOT NULL,
     `Seat_Number` VARCHAR(100) NOT NULL,
-    `Available` TINYINT NULL DEFAULT 1,
+    `Available` TINYINT NOT NULL DEFAULT 1,
     `Passenger_Name` VARCHAR(100) NULL,
     PRIMARY KEY (`Seat_ID`),
     UNIQUE KEY `Seat_Numbers` (`Seat_Number`, `Flight_ID`),
-    INDEX `fk_Seats_Travel_Class1_idx` (`Travel_Class_ID` ASC) VISIBLE,
-    INDEX `fk_Seats_Flights1_idx` (`Flight_ID` ASC) VISIBLE,
-    CONSTRAINT `Seat_Number_gtzero` CHECK (`Seat_Number` > 0),
-    CONSTRAINT `fk_Seats_Travel_Class1` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `cs340_mcelhine`.`Travel_Classes` (`Travel_Class_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT `fk_Seats_Flights1` FOREIGN KEY (`Flight_ID`) REFERENCES `cs340_mcelhine`.`Flights` (`Flight_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+    INDEX `fk_Seats_Travel_Class_idx` (`Travel_Class_ID` ASC) VISIBLE,
+    INDEX `fk_Seats_Flights_idx` (`Flight_ID` ASC) VISIBLE,
+    CONSTRAINT `fk_Seats_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Seats_Flights` FOREIGN KEY (`Flight_ID`) REFERENCES `Flights` (`Flight_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Seats` (
-        `Travel_Class_ID`,
-        `Flight_ID`,
-        `Seat_Number`
-    )
-VALUES (1, 1, 1),
-    (2, 1, 2),
-    (3, 1, 3),
-    (1, 2, 1),
-    (1, 2, 2);
+INSERT INTO `Seats` (`Travel_Class_ID`, `Flight_ID`, `Seat_Number`, `Available`, `Passenger_Name`)
+VALUES 
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
+        '1A', FALSE, 'James Smith'),
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
+        '1B', TRUE, NULL),
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
+        '1C', TRUE, NULL),
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
+        '2A', TRUE, NULL),
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
+        '2B', TRUE, NULL),
+    ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 
+        (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
+        '2C', TRUE, NULL);
 
 -- -----------------------------------------------------
--- Table `cs340_mcelhine`.`Airplane_Travel_Classes`
+-- Table `Airplane_Travel_Classes`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `cs340_mcelhine`.`Airplane_Travel_Classes`;
+DROP TABLE IF EXISTS `Airplane_Travel_Classes`;
 
-CREATE TABLE IF NOT EXISTS `cs340_mcelhine`.`Airplane_Travel_Classes` (
+CREATE TABLE IF NOT EXISTS `Airplane_Travel_Classes` (
     `Airplane_Travel_Classes_ID` INT NOT NULL AUTO_INCREMENT,
     `Airplane_Type_ID` INT NOT NULL,
     `Travel_Class_ID` INT NOT NULL,
-    `Travel_Class_Capacity` BIGINT NULL,
+    `Travel_Class_Capacity` INT NOT NULL,
     PRIMARY KEY (`Airplane_Travel_Classes_ID`),
-    INDEX `fk_Airplane_Type_has_Travel_Class_Travel_Class1_idx` (`Travel_Class_ID` ASC) VISIBLE,
-    INDEX `fk_Airplane_Type_has_Travel_Class_Airplane_Type1_idx` (`Airplane_Type_ID` ASC) VISIBLE,
-    CONSTRAINT `fk_Airplane_Type_has_Travel_Class_Airplane_Type1` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `cs340_mcelhine`.`Airplane_Types` (`Airplane_Type_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_Airplane_Type_has_Travel_Class_Travel_Class1` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `cs340_mcelhine`.`Travel_Classes` (`Travel_Class_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+    INDEX `fk_Airplane_Travel_Classes_Airplane_Type_idx` (`Airplane_Type_ID` ASC) VISIBLE,
+    INDEX `fk_Airplane_Travel_Classes_Travel_Class_idx` (`Travel_Class_ID` ASC) VISIBLE,
+    CONSTRAINT `fk_Airplane_Travel_Classes_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Airplane_Travel_Classes_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-INSERT INTO
-    `cs340_mcelhine`.`Airplane_Travel_Classes` (
-        `Airplane_Type_ID`,
-        `Travel_Class_ID`,
-        `Travel_Class_Capacity`
-    )
-VALUES (1, 1, 20),
-    (1, 2, 50),
-    (1, 3, 100),
-    (2, 1, 20),
-    (2, 2, 50),
-    (2, 3, 100),
-    (4, 1, 0),
-    (4, 2, 0),
-    (4, 3, 5);
+INSERT INTO `Airplane_Travel_Classes` (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`)
+VALUES 
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 737"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 12),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 737"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 36),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 737"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 102),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Airbus A320"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 16),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Airbus A320"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 40),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Airbus A320"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 120),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Bombardier CRJ"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 8),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Bombardier CRJ"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 24),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Bombardier CRJ"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 60),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Cessna 172"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 1),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Cessna 172"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 1),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Cessna 172"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 2),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 24),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 72),
+    ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 200);
 
 SET SQL_MODE = @OLD_SQL_MODE;
-
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
-
 SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
 
 COMMIT;
