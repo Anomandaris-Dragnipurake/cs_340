@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS `Flights` (
     INDEX `fk_Flights_Origin_Airport_idx` (`Origin_Airport_ID` ASC) VISIBLE,
     INDEX `fk_Flights_Destination_Airport_idx` (`Destination_Airport_ID` ASC) VISIBLE,
     INDEX `fk_Flights_Airplane_Type_idx` (`Airplane_Type_ID` ASC) VISIBLE,
-    CONSTRAINT `fk_Flights_Origin_Airport` FOREIGN KEY (`Origin_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_Flights_Destination_Airport` FOREIGN KEY (`Destination_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_Flights_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `fk_Flights_Origin_Airport` FOREIGN KEY (`Origin_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Flights_Destination_Airport` FOREIGN KEY (`Destination_Airport_ID`) REFERENCES `Airports` (`Airport_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Flights_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `Flights` (`Departure_Date_Time`, `Arrival_Date_Time`, `Origin_Airport_ID`, `Destination_Airport_ID`, `Airplane_Type_ID`)
@@ -93,9 +93,6 @@ VALUES
         (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "MDT"),
         (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "CAI"),
         (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"));
-
-SELECT * FROM Flights 
-WHERE Origin_Airport_ID IN (SELECT Airport_ID FROM Airports WHERE Airport_Country = 'Japan');
 
 -- -----------------------------------------------------
 -- Table `Travel_Classes`
@@ -126,12 +123,12 @@ CREATE TABLE IF NOT EXISTS `Seats` (
     `Flight_ID` INT NOT NULL,
     `Seat_Number` VARCHAR(100) NOT NULL,
     `Available` TINYINT NOT NULL DEFAULT 1,
-    `Passenger_Name` VARCHAR(100) NULL,
+    `Passenger_Name` VARCHAR(100) DEFAULT NULL,
     PRIMARY KEY (`Seat_ID`),
     UNIQUE KEY `Seat_Numbers` (`Seat_Number`, `Flight_ID`),
     INDEX `fk_Seats_Travel_Class_idx` (`Travel_Class_ID` ASC) VISIBLE,
     INDEX `fk_Seats_Flights_idx` (`Flight_ID` ASC) VISIBLE,
-    CONSTRAINT `fk_Seats_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_Seats_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_Seats_Flights` FOREIGN KEY (`Flight_ID`) REFERENCES `Flights` (`Flight_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
@@ -139,22 +136,22 @@ INSERT INTO `Seats` (`Travel_Class_ID`, `Flight_ID`, `Seat_Number`, `Available`,
 VALUES 
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
-        '1A', FALSE, 'James Smith'),
+        '1', FALSE, 'James Smith'),
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
-        '1B', TRUE, NULL),
+        '1', TRUE, NULL),
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 08:00:00'), 
-        '1C', TRUE, NULL),
+        '1', TRUE, NULL),
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "First"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
-        '2A', TRUE, NULL),
+        '2', TRUE, NULL),
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
-        '2B', TRUE, NULL),
+        '2', TRUE, NULL),
     ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 
         (SELECT `Flight_ID` FROM `Flights` WHERE `Departure_Date_Time` = '2024-07-16 09:00:00'), 
-        '2C', TRUE, NULL);
+        '2', TRUE, NULL);
 
 -- -----------------------------------------------------
 -- Table `Airplane_Travel_Classes`
@@ -169,8 +166,8 @@ CREATE TABLE IF NOT EXISTS `Airplane_Travel_Classes` (
     PRIMARY KEY (`Airplane_Travel_Classes_ID`),
     INDEX `fk_Airplane_Travel_Classes_Airplane_Type_idx` (`Airplane_Type_ID` ASC) VISIBLE,
     INDEX `fk_Airplane_Travel_Classes_Travel_Class_idx` (`Travel_Class_ID` ASC) VISIBLE,
-    CONSTRAINT `fk_Airplane_Travel_Classes_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_Airplane_Travel_Classes_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `fk_Airplane_Travel_Classes_Airplane_Type` FOREIGN KEY (`Airplane_Type_ID`) REFERENCES `Airplane_Types` (`Airplane_Type_ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_Airplane_Travel_Classes_Travel_Class` FOREIGN KEY (`Travel_Class_ID`) REFERENCES `Travel_Classes` (`Travel_Class_ID`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `Airplane_Travel_Classes` (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`)
@@ -205,11 +202,6 @@ VALUES
         (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Business"), 72),
     ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"), 
         (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = "Economy"), 200);
--- Added DELETE example for flights that also deletes associated seats but not travel classes 
-DELETE FROM Flights WHERE Flight_ID = 1;
--- Added UPDATE example for Flights
-UPDATE Flights SET Departure_Date_time = '2024-07-16 10:00:00' WHERE Flight_ID = 1;
-
 
 SET SQL_MODE = @OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;

@@ -66,21 +66,10 @@ DELETE FROM airplane_types WHERE `Airplane_Type_ID` = :ATID;
 -- Airplane Travel Class
 -- Create a new airplane travel class
 -- Variables: :APType, :TravelClass, :Capacity
-INSERT INTO `Airplane_Travel_Classes` (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`)
-VALUES (
-    (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :APType), 
-    (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :TravelClass), 
-    :Capacity
-);
+INSERT INTO airplane_travel_classes (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`)
+ VALUES ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :APType), 
+        (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :TravelClass), :Capacity);
 
--- This will be triggered in the backend when a new airplane is added to seed the table with 0 capacity entries for new planes.
--- Variables: :APType, :TravelClass, :Capacity
-INSERT INTO `Airplane_Travel_Classes` (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`)
-VALUES (
-    (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :APType), 
-    (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :TravelClass), 
-    0
-);
 -- Read all airplane travel classes
 SELECT * FROM airplane_travel_classes;
 
@@ -124,20 +113,6 @@ SELECT *
 FROM `Flights`
 WHERE `Origin_Airport_ID` = :Origin_Airport_ID;
 
--- Retrieve all flight numbers
-SELECT `Flight_ID`
-FROM `Flights`
-
--- Update a flight
--- Variables :Departure, :Arrival, :Origin, :Destination, :Airplane_Type, :Flight
-UPDATE `Flights` 
-SET `Departure_Date_Time` = :Departure,
-    `Arrival_Date_Time` = :Arrival,
-    `Origin_Airport_ID`= (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Origin),
-    `Destination_Airport_ID` = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Destination),
-    `Airplane_Type_ID` = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type)
-WHERE `Flight_ID` = :Flight;
-
 -- Retrieve all flights from a specific airport
 -- Variable: :Origin
 SELECT *
@@ -163,29 +138,22 @@ WHERE `Departure_Date_Time` >= :Departure AND `Arrival_Date_Time` <= :Arrival
 UPDATE `Flights` 
 SET `Departure_Date_Time` = :Departure,
     `Arrival_Date_Time` = :Arrival,
-    `Origin_Airport_ID` = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Origin),
-    `Destination_Airport_ID` = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Destination),
-    `Airplane_Type_ID` = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type)
+    `Origin_Airport_ID`= :Origin,
+    `Destination_Airport_ID` = :Destination,
+    `Airplane_Type_ID` = :Airplane_Type
 WHERE `Flight_ID` = :Flight
 
 
 -- Delete a flight
 -- Variable: :Flight_ID
--- Ensure deleting a flight also delets associated seats
 DELETE FROM `Flights` WHERE `Flight_ID` = :Flight_ID;
-DELETE FROM `Seats` WHERE `Flight_ID` = :Flight_ID;
 
 -- Seats
 -- Insert a new seat
 -- Variables: :Class, :Flight, :SeatNumber
 INSERT INTO `Seats` (`Travel_Class_ID`, `Flight_ID`, `Seat_Number`, `Available`, `Passenger_Name`)
-VALUES (
-    (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :Class),
-    :Flight, 
-    :SeatNumber, 
-    1, 
-    NULL
-);
+VALUES ((SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :Class),
+:Flight, :SeatNumber, 1, NULL);
 
 -- Update seat availability
 -- Variables: :Seat_Number, :Flight_ID, :Passenger_Name
