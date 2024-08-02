@@ -82,7 +82,16 @@ VALUES (
     0
 );
 -- Read all airplane travel classes
-SELECT * FROM airplane_travel_classes;
+SELECT
+    `Airplane_Travel_Classes_ID`,
+    `Airplane_Type_ID`,
+    APT.`Airplane_Type`,
+    `Travel_Class_ID`,
+    TC.`Travel_Class_Name`,
+    `Travel_Class_Capacity`,
+FROM airplane_travel_classes
+INNER JOIN airplane_types AS APT ON `APT`.`Airplane_Type_ID`=airplane_travel_classes.`Airplane_Type_ID`
+INNER JOIN travel_classes AS TC ON TC.`Travel_Class_ID` = airplane_travel_classes.`Travel_Class_ID`;
 
 -- Read all travel classes for a specific airplane type
 -- Variables: :APType
@@ -119,15 +128,26 @@ INSERT INTO `Flights` (
 );
 
 -- Retrieve all flights from a specific airport
+-- Note we want to have the FKs for lookups later but they will not be displayed
 -- Variable: :Origin
-SELECT *
+SELECT 
+    `Flight_ID`,
+    `Departure_Date_Time` ,
+    `Arrival_Date_Time` ,
+    `Origin_Airport_ID`,
+    OG.`Airport_Name`,
+    `Destination_Airport_ID`,
+    DEST.`Airport_Name`,
+    APT.`Airplane_Type`,
+    `Airplane_Type_ID`
 FROM `Flights`
+INNER JOIN airports AS OG ON `Flights`.`Origin_Airport_ID` = airports.`Airport_ID`
+INNER JOIN airports AS DEST ON `Flights`.`Destination_Airport_ID`=airports.`Airport_ID`
+INNER JOIN airplane_types AS APT ON `Flights`.`Airplane_Type_ID` = APT.`Airplane_Type_ID`
 WHERE `Origin_Airport_ID` = :Origin_Airport_ID;
 
 -- Retrieve all flight numbers
-SELECT `Flight_ID`
-FROM `Flights`
-
+SELECT `Flight_ID` FROM `Flights`
 -- Update a flight
 -- Variables :Departure, :Arrival, :Origin, :Destination, :Airplane_Type, :Flight
 UPDATE `Flights` 
@@ -173,6 +193,7 @@ WHERE `Flight_ID` = :Flight
 -- Variable: :Flight_ID
 -- Ensure deleting a flight also delets associated seats
 DELETE FROM `Flights` WHERE `Flight_ID` = :Flight_ID;
+
 DELETE FROM `Seats` WHERE `Flight_ID` = :Flight_ID;
 
 -- Seats
@@ -197,8 +218,15 @@ WHERE `Seat_Number` = :Seat_Number AND `Flight_ID` = :Flight_ID;
 -- Find all available seats on a specific flight
 -- Variable: :Flight_ID
 
-SELECT *
+SELECT 
+    `Seat_ID`,
+    `Travel_Class_ID`,
+    TC.`Travel_Class_Name`,
+    `Seat_Number`,
+    `Available`,
+    `Passenger_Name` 
 FROM `Seats`
+INNER JOIN travel_classes AS TC ON `Seats`.`Travel_Class_ID`=TC.`Travel_Class_ID`
 WHERE `Flight_ID` = :Flight_ID AND `Available` = 1;
 
 -- Delete a seat
