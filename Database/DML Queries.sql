@@ -191,7 +191,7 @@ WHERE `Flight_ID` = :Flight
 
 -- Delete a flight
 -- Variable: :Flight_ID
--- Ensure deleting a flight also delets associated seats
+-- Ensure deleting a flight also deletes associated seats
 DELETE FROM `Flights` WHERE `Flight_ID` = :Flight_ID;
 
 DELETE FROM `Seats` WHERE `Flight_ID` = :Flight_ID;

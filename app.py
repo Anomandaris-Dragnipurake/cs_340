@@ -1,4 +1,5 @@
-from flask import Flask, render_template, json
+from flask import Flask, render_template, json, request, redirect, url_for
+from flask_mysqldb import MySQL
 import os
 import Database.db_connector as db
 
@@ -45,13 +46,63 @@ def airport_admin():
     results = cursor.fetchall()
     return render_template("airport_admin.j2", data=results)
 
+# Travel Class Routes
 
-@app.route('/travelclass-admin')
+
+@app.route('/travelclass-admin', methods=["POST", "GET"])
 def travelclass_admin():
-    query = "SELECT * FROM Travel_Classes;"  # Replace with true query later
-    cursor = db.execute_query(db_connection=db_connection, query=query)
-    results = cursor.fetchall()
-    return render_template("travelclass_admin.j2", data=results)
+    pgOption = "browseForm()"
+    # Populate table
+    if request.method == "GET":
+        query = "SELECT * FROM Travel_Classes;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        results = cursor.fetchall()
+        return render_template("travelclass_admin.j2", data=results, pgOption=pgOption)
+    # Create a new entry
+    if request.method == "POST":
+        cTCName = request.form["name"]
+        cTCCost = request.form["cost"]
+        query = "INSERT INTO travel_classes (`Travel_Class_Name`, `Travel_Class_Cost`) VALUES (%s, %s);"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(cTCName, cTCCost))
+        return redirect("/travelclass-admin")
+
+
+@app.route("/delete_travelclass/<int:id>", methods=["POST", "GET"])
+def delete_tc(id):
+    pgOption = "deleteForm()"
+    if request.method == "GET":
+        query = "SELECT * FROM Travel_Classes WHERE Travel_Class_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("travelclass_admin.j2", data=results, pgOption=pgOption)
+    
+    if request.method == "POST":
+        query = "DELETE FROM travel_classes WHERE `Travel_Class_ID` = %s"
+        cursor = db.execute_query(
+        db_connection=db_connection, query=query, query_params=(id,))
+    return redirect("/travelclass-admin")
+
+
+@app.route("/edit_travelclass/<int:id>", methods=["POST", "GET"])
+def edit_tc(id):
+    pgOption = "updateForm()"
+    if request.method == "GET":
+        query = "SELECT * FROM Travel_Classes WHERE Travel_Class_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("travelclass_admin.j2", data=results, pgOption=pgOption)
+
+    if request.method == "POST":
+        id = request.form["travelClassID"]
+        name = request.form["name"]
+        cost = request.form["cost"]
+        query = "UPDATE travel_classes SET `Travel_Class_Name` = %s, `Travel_Class_Cost` = %s WHERE `Travel_Class_ID` = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(name, cost, id))
+        return redirect("/travelclass-admin")
 
 
 @app.route('/airplanetravelclass-admin')
