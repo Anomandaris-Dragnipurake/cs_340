@@ -1,3 +1,7 @@
+""" The following python is derived from the starter app code for cs_340
+Date 7/25/2024
+Derived from the example structure of python
+https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master """
 from flask import Flask, render_template, json, request, redirect, url_for
 from flask_mysqldb import MySQL
 import os
@@ -38,13 +42,97 @@ def airplane_admin():
     results = cursor.fetchall()
     return render_template("airplane_admin.j2", data=results)
 
+# Airport Routes
 
-@app.route('/airport-admin')
+
+@app.route('/airport-admin', methods=["POST", "GET"])
 def airport_admin():
-    query = "SELECT * FROM Airports;"  # Replace with true query later
-    cursor = db.execute_query(db_connection=db_connection, query=query)
-    results = cursor.fetchall()
-    return render_template("airport_admin.j2", data=results)
+    pgOption = "browseForm()"
+    # Populate table
+    if request.method == "GET":
+        query = "SELECT DISTINCT Airport_Country FROM Airports;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        getCResults = cursor.fetchall()
+
+        query = "SELECT * FROM Airports;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        getAPResults = cursor.fetchall()
+        return render_template("airport_admin.j2", data=getAPResults, pgOption=pgOption, countryData=getCResults)
+    
+@app.route('/airport-admin/<country>', methods=["POST", "GET"])
+def airport_adminFilter(country):
+    pgOption = "browseForm()"
+    # Populate table
+    if request.method == "GET":
+        query = "SELECT Country FROM Airports;"
+        cursor = db.execute_query(db_connection=db_connection, query=query)
+        getCResults = cursor.fetchall()
+        
+        if country == 0 or country.upper() == "NULL":
+            query = "SELECT * FROM Airports;"
+            cursor = db.execute_query(db_connection=db_connection, query=query)
+            getAPResults = cursor.fetchall()
+        else:
+            query = "SELECT * FROM Airports WHERE Country = %s;"
+            cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(country,))
+            getAPResults = cursor.fetchall()
+
+        return render_template("airport_admin.j2", data=getAPResults, pgOption=pgOption, countryData=getCResults)
+    # Create a new entry
+    if request.method == "POST":
+        cAName = request.form["name"]
+        cACity = request.form["city"]
+        cACountry = request.form["country"]
+        query = "INSERT INTO airports (`Airport_Name`, `Airport_City`, `Airport_Country`) VALUES (%s, %s, %s);"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(cAName,cACity,cACountry))
+        return redirect("/airport-admin")
+
+@app.route("/edit_airport/<int:id>", methods=["POST", "GET"])
+def edit_ap(id):
+    pgOption = "updateForm()"
+    if request.method == "GET":
+        query = "SELECT * FROM airports WHERE Airport_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("airport_admin.j2", data=results, pgOption=pgOption)
+
+    if request.method == "POST":
+        id = request.form["airportID"]
+        name = request.form["name"]
+        city = request.form["city"]
+        country = request.form["country"]
+        query = "UPDATE airports SET `Airport_Name` = %s, `Airport_City` = %s, `Airport_Country`=%s WHERE `Airport_ID` = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(name, city, country, id))
+        return redirect("/airport-admin")
+
+@app.route("/delete_airport/<int:id>", methods=["POST", "GET"])
+def delete_ap(id):
+    pgOption = "deleteForm()"
+    if request.method == "GET":
+        query = "SELECT * FROM Airports WHERE Airport_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("airport_admin.j2", data=results, pgOption=pgOption)
+
+    if request.method == "POST":
+        query = "DELETE FROM airports WHERE `Airport_ID` = %s"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+    return redirect("/airport-admin")
+
+
+
+
+
+
+
+
+
+
 
 # Travel Class Routes
 
@@ -77,11 +165,11 @@ def delete_tc(id):
             db_connection=db_connection, query=query, query_params=(id,))
         results = cursor.fetchall()
         return render_template("travelclass_admin.j2", data=results, pgOption=pgOption)
-    
+
     if request.method == "POST":
         query = "DELETE FROM travel_classes WHERE `Travel_Class_ID` = %s"
         cursor = db.execute_query(
-        db_connection=db_connection, query=query, query_params=(id,))
+            db_connection=db_connection, query=query, query_params=(id,))
     return redirect("/travelclass-admin")
 
 
