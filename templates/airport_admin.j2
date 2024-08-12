@@ -12,10 +12,17 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
         color: #06407a;
     }
 </style>
+<script type="text/javascript">
+    document.addEventListener('input', function (event) {
+        if (event.target.id !== 'countryFilter') return;
+        window.location.href = window.location.href.split('?')[0] + '?country=' + event.target.value;
+    }, false);
+</script>
 {% endblock %}
-{% block read %}<div>
-    <label for="flightNumber">Country:</label>
-    <select class="form-control" id="flightNumber" name="flightNumber" pattern="" placeholder="">
+{% block read %}
+<div>
+    <label for="countryFilter">Country:</label>
+    <select class="form-control" id="countryFilter" name="countryFilter" placeholder="">
         <option value="0">&nbsp;</option>
         {% for item in countryData %}
         {% for key in item.keys() %}
@@ -25,7 +32,11 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
     </select>
 </div>
 <div>
-    {{ super() }}</div>{% endblock %}
+    <a class="btn btn-primary" href="/airport-admin">Reset</a>
+</div>
+<div>
+    {{ super() }}
+</div>{% endblock %}
 {% block new_button%}<th><a href="#" onClick="createForm()">Add New</a> </th> {% endblock %}
 {% block update_button%}<td><a href="edit_airport/{{item.Airport_ID}}" class="btn btn-default">Edit</a></td>{%
 endblock
@@ -42,11 +53,10 @@ endblock %}
         <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="PIT" required>
 
         <label for="city">City:</label>
-        <input type="text" class="form-control" id="city" name="city" pattern="" placeholder="Pittsburgh" required>
+        <input type="text" class="form-control" id="city" name="city" placeholder="Pittsburgh" required>
 
         <label for="country">Country:</label>
-        <input type="text" class="form-control" id="country" name="country" pattern="" placeholder="United States"
-            required>
+        <input type="text" class="form-control" id="country" name="country" placeholder="United States" required>
     </fieldset>
 
     <div class="btnBlock">

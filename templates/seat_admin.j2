@@ -12,59 +12,78 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
         color: #06407a;
     }
 </style>
+<script type="text/javascript">
+    document.addEventListener('input', function (event) {
+        if (event.target.id !== 'flightFilter') return;
+        window.location.href = window.location.href.split('?')[0] + '?flight=' + event.target.value;
+    }, false);
+</script>
 {% endblock %}
 {% block read %}
 <div>
-    <label for="flightNumber">Flight Number:</label>
-    <select class="form-control" id="flightNumber" name="flightNumber" pattern="" placeholder="">
-        <option value="0">&nbsp;</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
+    <label for="flightFilter">Flight Number:</label>
+    <select class="form-control" id="flightFilter" name="flightFilter" pattern="" placeholder="">
+        <option value="NULL">&nbsp;</option>
+        {% for item in flightData %}
+        {% for key in item.keys() %}
+        <option value="{{item[key]}}"> {{item[key]}} </option>
+        {% endfor %}
+        {% endfor %}
     </select>
+    <div>
+    <a class="btn btn-primary" href="/seat-admin">Reset</a>
+</div>
 </div>
 <div>
     {{ super() }}
 </div>
 {% endblock %}
-{% block new_button%}<th><a href="#" onClick="newSeat()">New</a> </th> {% endblock %}
-{% block update_button%}<td><a href="edit_seat/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
-{% block delete_button%}<td><a href="delete_seat/{{item.id}}" class="btn btn-default">Delete</a></td>{% endblock %}
+{% block new_button%}<th><a href="#" onClick="createForm()">Add New</a> </th> {% endblock %}
+{% block update_button%}<td><a href="edit_seat/{{item.Seat_ID}}" class="btn btn-default">Edit</a></td>{% endblock %}
+{% block delete_button%}<td><a href="delete_seat/{{item.Seat_ID}}" class="btn btn-default">Delete</a></td>{% endblock %}
 
 {% block create %}
 <form id="createSeat" action="/seat-admin" method="post">
     <h1 class="title">Add Seat</h1>
     <p>Use with caution, this function allows for creation of seats outside of the standard configuration</p>
     <fieldset class="fields">
-        <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
-        <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}"
-            placeholder="{{data[0].Travel_Class_Name}}" required>
+        <label for="class">Class:</label>
+        <select class="form-control" id="class" name="class" pattern="" placeholder="">
+            <option value="NULL">&nbsp;</option>
+            {% for item in tcData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
+        </select>
 
         <label for="flight">Flight:</label>
-        <input type="text" class="form-control" id="flight" name="flight" pattern="[1-9][0-9]*"
-            placeholder="{{data[0].Flight}}" required>
+        <select class="form-control" id="flight" name="flight" pattern="" placeholder="">
+            {% for item in flightData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
+        </select>
 
         <label for="seatnum">Seat Number:</label>
-        <input type="text" class="form-control" id="seatnum" name="seatnum" pattern="[1-9][0-9]*"
-            placeholder="{{data[0].SeatNumber}}" required>
+        <input type="text" class="form-control" id="seatnum" name="seatnum" pattern="[1-9][0-9]*" placeholder="1"
+            required>
 
         <label for="available">Available:</label>
         <select class="form-control" id="available" name="available" pattern="" placeholder="" required>
-            <option value="3">&nbsp;</option>
             <option value="0">False</option>
             <option value="1">True</option>
         </select>
 
         <label for="passenger_name">Passenger Name:</label>
         <input type="text" class="form-control" id="passenger_name" name="passenger_name" pattern="[A-Za-z]{1,}"
-            placeholder="{{data[0].Passenger_Name}}">
+            placeholder="James Smith">
     </fieldset>
 
     <div class="btnBlock">
-        <!-- Create 'Add Seat' and 'Cancel' buttons -->
         <input type="submit" value="Add Seat" name="Add_Seat" class="btn btn-primary">
-        <input class=" btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+        <a class=" btn btn-primary" href="/seat-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}
@@ -96,17 +115,17 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
 {% endblock %}
 
 {% block delete %}
-  <form method="POST" id="deleteSeat">
-      <h1 class="title">Delete Seat</h1>
-          <fieldset class="fields">
-          <p>Are you sure you wish to delete this Seat?</p>
-          <input type="hidden" name="seatID" id="deleteSeatID" value="{{data[0].Seat_ID}}">
-          <label>Seat Number:</label> {{data[0].SeatNumber}}
-          <label>Flight: </label> {{data[0].Flight}}         
+<form method="POST" id="deleteSeat">
+    <h1 class="title">Delete Seat</h1>
+    <fieldset class="fields">
+        <p>Are you sure you wish to delete this Seat?</p>
+        <input type="hidden" name="seatID" id="deleteSeatID" value="{{data[0].Seat_ID}}">
+        <label>Seat Number:</label> {{data[0].SeatNumber}}
+        <label>Flight: </label> {{data[0].Flight}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteSeat" value="Delete Seat">
         <input class="btn" type="button" value="Cancel">{# onclick="browsePeople()" #}
     </div>
-  </form> 
+</form>
 {% endblock %}

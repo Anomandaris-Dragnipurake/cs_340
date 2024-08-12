@@ -14,9 +14,10 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
 </style>
 {% endblock %}
 {% block read %}{{ super() }}{% endblock %}
-{% block new_button%}<th><a href="#" onClick="newFlight()">New</a> </th> {% endblock %}
-{% block update_button%}<td><a href="edit_flight/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
-{% block delete_button%}<td><a href="delete_flight/{{item.id}}" class="btn btn-default">Delete</a></td>{% endblock %}
+{% block new_button%}<th><a href="#" onClick="createForm()">Add New</a> </th> {% endblock %}
+{% block update_button%}<td><a href="edit_flight/{{item.Flight_ID}}" class="btn btn-default">Edit</a></td>{% endblock %}
+{% block delete_button%}<td><a href="delete_flight/{{item.Flight_ID}}" class="btn btn-default">Delete</a></td>{%
+endblock %}
 
 {% block create %}
 <form id="createFlight" action="/flight-admin" method="post">
@@ -24,40 +25,46 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
     <fieldset class="fields">
         <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
         <label for="departure">Departure Date/Time:</label>
-        <input type="text" class="form-control" id="departure" name="departure"
+        <input type="datetime-local" class="form-control" id="departure" name="departure"
             pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" placeholder="0000-00-00 00:00:00" required>
 
         <label for="arrival">Departure Date/Time:</label>
-        <input type="text" class="form-control" id="arrival" name="arrival"
+        <input type="datetime-local" class="form-control" id="arrival" name="arrival"
             pattern="(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})" placeholder="0000-00-00 00:00:00" required>
 
         <label for="origin">Origin Airport:</label>
         <select class="form-control" id="origin" name="origin" pattern="[A-Za-z]{1,}" placeholder="" required>
             <option value="0">&nbsp;</option>
-            <option value="1">MDT</option>
-            <option value="2">LHR</option>
-            <option value="3">CAI</option>
+            {% for item in airportData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
         </select>
         <label for="destination">Destination Airport:</label>
         <select class="form-control" id="destination" name="destination" pattern="[A-Za-z]{1,}" placeholder="" required>
             <option value="0">&nbsp;</option>
-            <option value="1">MDT</option>
-            <option value="2">LHR</option>
-            <option value="3">CAI</option>
+            {% for item in airportData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
         </select>
         <label for="airplane">Airplane Type:</label>
         <select class="form-control" id="airplane" name="airplane" pattern="[A-Za-z]{1,}" placeholder="" required>
             <option value="0">&nbsp;</option>
-            <option value="1">Boeing 737</option>
-            <option value="2">Airbus A320</option>
-            <option value="3">Cessna 172</option>
+            {% for item in airplaneData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
         </select>
     </fieldset>
 
     <div class="btnBlock">
         <!-- Create 'Add Flight' and 'Cancel' buttons -->
         <input type="submit" value="Add Flight" name="Add_Flight" class="btn btn-primary" ">
-        <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+        <a class="btn btn-primary" href="/flight-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}
@@ -103,8 +110,7 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="Update Flight" value="Update Flight">
-        <input class="btn" type="button" value="Cancel" ">{# onClick="browsePeople()" #}
-    </div>
+        <input class="btn" type="button" value="Cancel" ">{# onClick=" browsePeople()" #} </div>
 </form>
 {% endblock %}
 
@@ -122,7 +128,6 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteFlight" value="Delete Flight">
-        <input class="btn" type="button" value="Cancel" ">{# onclick="browsePeople()" #}
-    </div>
+        <input class="btn" type="button" value="Cancel" ">{# onclick=" browsePeople()" #} </div>
 </form>
 {% endblock %}

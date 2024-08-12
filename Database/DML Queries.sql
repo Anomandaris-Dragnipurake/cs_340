@@ -198,14 +198,14 @@ DELETE FROM `Seats` WHERE `Flight_ID` = :Flight_ID;
 
 -- Seats
 -- Insert a new seat
--- Variables: :Class, :Flight, :SeatNumber
+-- Variables: :Class, :Flight, :SeatNumber, :Available, :Passenger_Name
 INSERT INTO `Seats` (`Travel_Class_ID`, `Flight_ID`, `Seat_Number`, `Available`, `Passenger_Name`)
 VALUES (
     (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = :Class),
     :Flight, 
     :SeatNumber, 
-    1, 
-    NULL
+    :Available, 
+    :Passenger_Name
 );
 
 -- Update seat availability

@@ -12,37 +12,92 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
         color: #06407a;
     }
 </style>
+<script type="text/javascript">
+    document.addEventListener('input', function (event) {
+        let cURL = window.location.href.split('?')[0];
+        let urlParams = window.location.href.split('?')[1];
+        if (event.target.id == 'airplaneFilter') {
+            if (typeof urlParams !== 'undefined') 
+            {
+                let classValue = urlParams.split('class=')[1];
+                cURL = cURL + '?airplane=' + event.target.value + '&class=' + classValue;
+            }
+            else {
+                cURL = cURL + '?airplane=' + event.target.value + '&class=0'
+            }
+        }
+        else if (event.target.id == 'classFilter')
+        {
+            if (typeof urlParams !== 'undefined') 
+            {
+                let airplaneValue = urlParams.split('airplane=')[1].split('&')[0];
+                cURL = cURL + '?airplane=' + airplaneValue + '&class=' + event.target.value;
+            }
+            else {
+                cURL = cURL + '?airplane=0' + '&class=' + event.target.value
+            }
+        }
+        else { return };
+
+        window.location.href = cURL;
+    }, false);
+</script>
 {% endblock %}
-{% block read %}{{ super() }}{% endblock %}
-{% block new_button%}<th class="readBtns"><a href="#" onClick="newAirplaneTC()">New</a> </th> {% endblock %}
-{% block update_button%}<td class="readBtns"><a href="edit_airplane/{{item.id}}" class="btn btn-default">Edit</a></td>{%
+{% block read %}
+<div>
+    <label for="airplaneFilter">Airplane:</label>
+    <select class="form-control" id="airplaneFilter" name="airplaneFilter" pattern="" placeholder="">
+        <option value="0">&nbsp;</option>
+        {% for item in airplaneData %}
+        {% for key in item.keys() %}
+        <option value="{{item[key]}}"> {{item[key]}} </option>
+        {% endfor %}
+        {% endfor %}
+    </select>
+    <label for="classFilter">Class:</label>
+    <select class="form-control" id="classFilter" name="classFilter" pattern="" placeholder="">
+        <option value="0">&nbsp;</option>
+        {% for item in classData %}
+        {% for key in item.keys() %}
+        <option value="{{item[key]}}"> {{item[key]}} </option>
+        {% endfor %}
+        {% endfor %}
+    </select>
+</div>
+<div>
+    <a class="btn btn-primary" href="/airplanetravelclass-admin">Reset</a>
+</div>
+{{ super() }}
+{% endblock %}
+{% block new_button%}<th class="readBtns"><a href="#" onClick="createForm()"> Add New</a> </th> {% endblock %}
+{% block update_button%}<td class="readBtns"><a href="edit_airplanetravelclass/{{item.Airplane_Travel_Classes_ID}}" class="btn btn-default">Edit</a></td>{%
 endblock %}
-{% block delete_button%}<td class="readBtns"><a href="delete_airplane/{{item.id}}" class="btn btn-default">Delete</a>
+{% block delete_button%}<td class="readBtns"><a href="delete_airplanetravelclass/{{item.Airplane_Travel_Classes_ID}}" class="btn btn-default">Delete</a>
 </td>{% endblock %}
 
 {% block create %}
-<form id="createAirplaneTC" action="/airplane-admin" method="post">
+<form id="createAirplaneTC" action="/airplanetravelclass-admin" method="post">
     <h1 class="title">Add Airplane Travel Class</h1>
     <fieldset class="fields">
-        {# Once the backend is built the display mechanism will change to incorporate dynamic data, but the display
-        style shown here will not change #}
         <label for="airplane_type">Airplane Type:</label>
         <select class="form-control" id="airplane_type" name="airplane_type" pattern="[A-Za-z]{1,}" placeholder=""
             required>
             <option value="0">&nbsp;</option>
-            <option value="1">Boeing 737</option>
-            <option value="2">Airbus A320</option>
-            <option value="3">Cessna 172</option>
+        {% for item in airplaneData %}
+        {% for key in item.keys() %}
+        <option value="{{item[key]}}"> {{item[key]}} </option>
+        {% endfor %}
+        {% endfor %}
         </select>
-        {# Once the backend is built the display mechanism will change to incorporate dynamic data, but the display
-        style shown here will not change #}
         <label for="travel_class">Travel Class:</label>
         <select class="form-control" id="travel_class" name="travel_class" pattern="[A-Za-z]{1,}" placeholder=""
             required>
             <option value="0">&nbsp;</option>
-            <option value="1">First</option>
-            <option value="2">Business</option>
-            <option value="3">Economy</option>
+        {% for item in classData %}
+        {% for key in item.keys() %}
+        <option value="{{item[key]}}"> {{item[key]}} </option>
+        {% endfor %}
+        {% endfor %}
         </select>
 
         <label for="travel_class_capacity">Capacity:</label>
@@ -54,18 +109,18 @@ endblock %}
     <div class="btnBlock">
         <!-- Create 'Add Airplane Travel Class' and 'Cancel' buttons -->
         <input type="submit" value="Add Airplane Travel Class" name="Add_AirplaneTC" class="btn">
-        <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+        <a class="btn btn-primary" href="/airplanetravelclass-admin">Cancel</a>
     </div>
 
 </form>
 {% endblock %}
 
 {% block update %}
-<form id="editAirplaneTC" action="/edit_people/{{data[0].id}}" method="post">
+<form id="editAirplaneTC" action="/edit_airplanetravelclass/{{data[0].Airplane_Travel_Classes_ID}}" method="post">
     <h1 class="title">Update Airplane Travel Class</h1>
     <fieldset class="fields">
-        <input type="hidden" value="{{data[0].Airplane_Travel_Classes_ID}}" class="form-control" id="airplaneID"
-            name="airplaneID" required>
+        <input type="hidden" value="{{data[0].Airplane_Travel_Classes_ID}}" class="form-control" id="airplanetravelclassID"
+            name="airplanetravelclassID" required>
         <p>Airplane Type: {{data[0].Airplane}} Travel Class: {{data[0].Class}}</p>
         <label for="travel_class_capacity">Capacity:</label>
         <input type="text" class="form-control" id="travel_class_capacity" name="travel_class_capacity"
@@ -74,25 +129,24 @@ endblock %}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="UpdateAirplaneTravelClass" value="Update Airplane Travel Class">
-        <input class="btn" type="button" value="Cancel" ">{# onClick="browsePeople()" #}
-    </div>
+        <a class="btn btn-primary" href="/airplanetravelclass-admin">Cancel</a>
+        </div>
 </form>
 {% endblock %}
 
 {% block delete %}
-<form method="POST" id="deleteAirplaneTravelClass">
+<form method="POST" id="deleteAirplaneTravelClass" action="/delete_airplanetravelclass/{{data[0].Airplane_Travel_Classes_ID}}">
     <h1 class="title">Delete Airplane Travel Class</h1>
     <fieldset class="fields">
         <p>Are you sure you wish to delete this airplane travel class?</p>
         <input type="hidden" name="airplanetcID" id="deleteAirplaneTCID" value="{{data[0].Airplane_Travel_Classes_ID}}">
-        <label>ID:</label> {{data[0].Airplane_Travel_Classes_ID}}
-        <label> Airplane Type </label> {{data[0].Airplane}}
-        <label> Travel Class </label> {{data[0].Class}}
-        <label> Capacity </label> {{data[0].Capacity}}
+        <label> Airplane Type: </label> {{data[0].Airplane}}
+        <label> Travel Class: </label> {{data[0].Class}}
+        <label> Capacity: </label> {{data[0].Capacity}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteAirplaneTC" value="Delete Airplane Travel Class">
-        <input class="btn" type="button" value="Cancel" ">{# onclick="browsePeople()" #}
+        <a class="btn btn-primary" href="/airplanetravelclass-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}

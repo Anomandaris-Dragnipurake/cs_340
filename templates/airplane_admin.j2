@@ -14,9 +14,9 @@
 </style>
 {% endblock %}
 {% block read %}{{ super() }}{% endblock %}
-{% block new_button%}<th><a href="#" onClick="newAirplane()">New</a> </th> {% endblock %}
-{% block update_button%}<td><a href="edit_airplane/{{item.id}}" class="btn btn-default">Edit</a></td>{% endblock %}
-{% block delete_button%}<td><a href="delete_airplane/{{item.id}}" class="btn btn-default">Delete</a></td>{% endblock %}
+{% block new_button%}<th><a href="#" onClick="createForm()">Add New</a> </th> {% endblock %}
+{% block update_button%}<td><a href="edit_airplane/{{item.Airplane_Type_ID}}" class="btn btn-default">Edit</a></td>{% endblock %}
+{% block delete_button%}<td><a href="delete_airplane/{{item.Airplane_Type_ID}}" class="btn btn-default">Delete</a></td>{% endblock %}
 
 {% block create %}
 <form id="createAirplane" action="/airplane-admin" method="post">
@@ -24,13 +24,13 @@
     <fieldset class="fields">
         <!-- placeholder shows ghost text, required forces an input, pattern forces input adherence -->
         <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}" placeholder="" required>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Boeing 737" required>
     </fieldset>
 
     <div class="btnBlock">
         <!-- Create 'Add Airplane' and 'Cancel' buttons -->
-        <input type="submit" value="Add Airplane" name="Add_Airplane" class="btn btn-primary" ">
-        <input class="btn" type="button" value="Cancel"> {# onClick="browsePeople()" #}
+        <input type="submit" value="Add Airplane" name="Add_Airplane" class="btn btn-primary">
+        <a class=" btn btn-primary" href="/airplane-admin">Cancel</a>
     </div>
 
 
@@ -38,19 +38,19 @@
 {% endblock %}
 
 {% block update %}
-<form id="editAirplane" action="/edit_people/{{data[0].id}}" method="post">
+<form id="editAirplane" action="/edit_airplane/{{data[0].Airplane_Type_ID}}" method="post">
     <h1 class="title">Update Airplane</h1>
     <fieldset class="fields">
         <input type="hidden" value="{{data[0].Airplane_Type_ID}}" class="form-control" id="airplaneID" name="airplaneID"
             required>
 
         <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z]{1,}"
+        <input type="text" class="form-control" id="name" name="name"
             placeholder="{{data[0].Airplane_Type}}" required>
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="Update Airplane" value="Update Airplane">
-        <input class="btn" type="button" value="Cancel" ">{# onClick="browsePeople()" #}
+        <a class="btn btn-primary" href="/airport-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}
@@ -62,11 +62,11 @@
         <p>Are you sure you wish to delete this airplane?</p>
         <input type="hidden" name="airplaneID" id="deleteAirplane_TypeID" value="{{data[0].Airplane_Type_ID}}">
         <label>ID: </label> {{data[0].Airplane_Type_ID}}
-        <label>Name: </label> {{data[0].Airplane_Type}}
+        <label> Name: </label> {{data[0].Airplane_Type}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteAirplane" value="Delete Airplane Type">
-        <input class="btn" type="button" value="Cancel">{# onclick="browsePeople()" #}
+        <a class="btn btn-primary" href="/airport-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}
