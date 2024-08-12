@@ -69,6 +69,52 @@ def seat_admin():
             return redirect("/seat-admin")
 
 
+@app.route("/edit_seat/<int:id>", methods=["POST", "GET"])
+def edit_seat(id):
+    pgOption = "updateForm()"
+    if request.method == "GET":
+        query = "SELECT `Seat_ID`, TC.`Travel_Class_Name` AS Class, `Flight_ID` AS Flight_Number, `Seat_Number`, CASE WHEN `Available` = '0' THEN 'False' ELSE 'True' END AS Available, `Passenger_Name` FROM seats LEFT JOIN travel_classes AS TC ON seats.`Travel_Class_ID`=`TC`.`Travel_Class_ID` WHERE SEAT_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+
+        # Get dropdown data
+        tcQuery = "SELECT Travel_Class_Name FROM Travel_Classes;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=tcQuery)
+        tcNames = cursor.fetchall()
+        return render_template("seat_admin.j2", data=results, pgOption=pgOption, tcData=tcNames)
+
+    if request.method == "POST":
+        cClass = request.form["class"]
+        cAvailable = request.form["available"]
+        cPName = request.form["passenger_name"]
+        if cPName != "":
+            query = "UPDATE `Seats` SET `Travel_Class_ID` = (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = %s),`Available` = %s, `Passenger_Name` = %s WHERE `Seat_ID` = %s;"
+            cursor = db.execute_query(
+                db_connection=db_connection, query=query, query_params=(cClass, cAvailable, cPName, id))
+        else:
+            query = "UPDATE `Seats` SET `Travel_Class_ID` = (SELECT `Travel_Class_ID` FROM `Travel_Classes` WHERE `Travel_Class_Name` = %s),`Available` = %s, `Passenger_Name` = NULL WHERE `Seat_ID` = %s;"
+            cursor = db.execute_query(
+                db_connection=db_connection, query=query, query_params=(cClass, cAvailable, id))
+        return redirect("/seat-admin")
+
+@app.route("/delete_seat/<int:id>", methods=["POST", "GET"])
+def delete_seat(id):
+    pgOption = "deleteForm()"
+    if request.method == "GET":
+        query = "SELECT `Seat_ID`, TC.`Travel_Class_Name` AS Class, `Flight_ID` AS Flight_Number, `Seat_Number`, CASE WHEN `Available` = '0' THEN 'False' ELSE 'True' END AS Available, `Passenger_Name` FROM seats LEFT JOIN travel_classes AS TC ON seats.`Travel_Class_ID`=`TC`.`Travel_Class_ID` WHERE SEAT_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("seat_admin.j2", data=results, pgOption=pgOption)
+
+    if request.method == "POST":
+        query = "DELETE FROM `Seats` WHERE `Seat_ID` = %s;"
+        cursor = db.execute_query(
+                db_connection=db_connection, query=query, query_params=(id,))
+        return redirect("/seat-admin")
+
 # Flight Routes
 
 
@@ -102,9 +148,9 @@ def flight_admin():
         query = "INSERT INTO `Flights` ( `Departure_Date_Time`, `Arrival_Date_Time`, `Origin_Airport_ID`, `Destination_Airport_ID`, `Airplane_Type_ID` ) VALUES ( %s, %s, (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s), (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s), (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = %s) );"
         cursor = db.execute_query(
             db_connection=db_connection, query=query, query_params=(cDepart, cArrive, cOrigin, cDestination, cAirplane))
-        
+
         # Add seats to the new flight based on the flight's airplane type's capacities
-        newFlightQuery = "SELECT Flight_ID FROM `Flights` WHERE Departure_Date_Time = %s AND Arrival_Date_Time = %s AND Origin_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s) AND Destination_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s) AND Airplane_Type_ID = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = %s);" 
+        newFlightQuery = "SELECT Flight_ID FROM `Flights` WHERE Departure_Date_Time = %s AND Arrival_Date_Time = %s AND Origin_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s) AND Destination_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s) AND Airplane_Type_ID = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = %s);"
         cursor = db.execute_query(
             db_connection=db_connection, query=newFlightQuery, query_params=(cDepart, cArrive, cOrigin, cDestination, cAirplane))
         newFlight = cursor.fetchall()
@@ -116,10 +162,61 @@ def flight_admin():
         newSeatNum = 1
         for travel_class in tcCapacities:
             for i in range(travel_class['Travel_Class_Capacity']):
-                cursor = db.execute_query(db_connection=db_connection, query=seatQuery, query_params=(travel_class['Travel_Class_ID'], newFlight[0]['Flight_ID'], newSeatNum))
+                cursor = db.execute_query(db_connection=db_connection, query=seatQuery, query_params=(
+                    travel_class['Travel_Class_ID'], newFlight[0]['Flight_ID'], newSeatNum))
                 newSeatNum += 1
 
         return redirect("/flight-admin")
+
+
+@app.route("/edit_flight/<int:id>", methods=["POST", "GET"])
+def edit_flight(id):
+    pgOption = "updateForm()"
+    if request.method == "GET":
+        query = "SELECT `Flight_ID` AS Flight_Number, `Departure_Date_Time` AS Departure, `Arrival_Date_Time` AS Arrival, OA.`Airport_Name` AS Origin, DA.`Airport_Name` AS Destination, airplane.`Airplane_Type` AS Airplane FROM Flights INNER JOIN airports AS OA ON `Flights`.`Origin_Airport_ID` = OA.`Airport_ID` INNER JOIN airports AS DA ON `Flights`.`Destination_Airport_ID` = DA.`Airport_ID` INNER JOIN airplane_types AS airplane ON `Flights`.`Airplane_Type_ID` = airplane.`Airplane_Type_ID` WHERE Flight_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+
+        # Get dropdown data
+        airportQuery = "SELECT Airport_Name FROM Airports;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=airportQuery)
+        airportNames = cursor.fetchall()
+
+        airplaneQuery = "SELECT Airplane_Type FROM Airplane_Types;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=airplaneQuery)
+        airplaneNames = cursor.fetchall()
+        return render_template("flight_admin.j2", data=results, pgOption=pgOption, airportData=airportNames, airplaneData=airplaneNames)
+
+    if request.method == "POST":
+        cDepart = request.form["departure"]
+        cArrive = request.form["arrival"]
+        cOrigin = request.form["origin"]
+        cDestination = request.form["destination"]
+        cAirplane = request.form["airplane"]
+        query = "UPDATE `Flights` SET `Departure_Date_Time` = %s, `Arrival_Date_Time` = %s, `Origin_Airport_ID`= (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s), `Destination_Airport_ID` = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = %s), `Airplane_Type_ID` = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = %s) WHERE `Flight_ID` = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(cDepart, cArrive, cOrigin, cDestination, cAirplane, id))
+        return redirect("/flight-admin")
+
+
+@app.route("/delete_flight/<int:id>", methods=["POST", "GET"])
+def delete_flight(id):
+    pgOption = "deleteForm()"
+    if request.method == "GET":
+        query = "SELECT `Flight_ID` AS Flight_Number, `Departure_Date_Time` AS Departure, `Arrival_Date_Time` AS Arrival, OA.`Airport_Name` AS Origin, DA.`Airport_Name` AS Destination, airplane.`Airplane_Type` AS Airplane FROM Flights INNER JOIN airports AS OA ON `Flights`.`Origin_Airport_ID` = OA.`Airport_ID` INNER JOIN airports AS DA ON `Flights`.`Destination_Airport_ID` = DA.`Airport_ID` INNER JOIN airplane_types AS airplane ON `Flights`.`Airplane_Type_ID` = airplane.`Airplane_Type_ID` WHERE Flight_ID = %s;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+        results = cursor.fetchall()
+        return render_template("flight_admin.j2", data=results, pgOption=pgOption)
+
+    if request.method == "POST":
+        query = "DELETE FROM flights WHERE `Flight_ID` = %s"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,))
+    return redirect("/flight-admin")
 
 # Airplane Routes
 

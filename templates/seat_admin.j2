@@ -31,8 +31,8 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
         {% endfor %}
     </select>
     <div>
-    <a class="btn btn-primary" href="/seat-admin">Reset</a>
-</div>
+        <a class="btn btn-primary" href="/seat-admin">Reset</a>
+    </div>
 </div>
 <div>
     {{ super() }}
@@ -89,27 +89,36 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
 {% endblock %}
 
 {% block update %}
-<form id="editSeat" action="/edit_seat/{{data[0].id}}" method="post">
+<form id="editSeat" action="/edit_seat/{{data[0].Seat_ID}}" method="post">
     <h1 class="title">Update Seat</h1>
     <fieldset class="fields">
         <input type="hidden" value="{{data[0].Seat_ID}}" class="form-control" id="seatID" name="seatID" required>
+        <p>Flight Number: {{data[0].Flight_Number}}
+            Seat Number: {{data[0].Seat_Number}}</p>
 
-        <p>Seat Number: {{data[0].Seat_Number}}</p>
+        <label for="class">Class:</label>
+        <select class="form-control" id="class" name="class" pattern="" placeholder="">
+            <option value="NULL">&nbsp;</option>
+            {% for item in tcData %}
+            {% for key in item.keys() %}
+            <option value="{{item[key]}}"> {{item[key]}} </option>
+            {% endfor %}
+            {% endfor %}
+        </select>
 
         <label for="available">Available:</label>
         <select class="form-control" id="available" name="available" pattern="" placeholder="" required>
-            <option value="3">&nbsp;</option>
             <option value="0">False</option>
             <option value="1">True</option>
         </select>
 
         <label for="passenger_name">Passenger Name:</label>
-        <input type="text" class="form-control" id="passenger_name" name="passenger_name" pattern="[A-Za-z]{1,}"
+        <input type="text" class="form-control" id="passenger_name" name="passenger_name"
             placeholder="{{data[0].Passenger_Name}}">
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="Update Seat" value="Update Seat">
-        <input class="btn" type="button" value="Cancel">{# onClick="browsePeople()" #}
+        <a class="btn btn-primary" href="/seat-admin">Cancel</a>
     </div>
 </form>
 {% endblock %}
@@ -120,8 +129,8 @@ https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master#}
     <fieldset class="fields">
         <p>Are you sure you wish to delete this Seat?</p>
         <input type="hidden" name="seatID" id="deleteSeatID" value="{{data[0].Seat_ID}}">
-        <label>Seat Number:</label> {{data[0].SeatNumber}}
-        <label>Flight: </label> {{data[0].Flight}}
+        <label>Seat Number:</label> {{data[0].Seat_Number}}
+        <label>Flight: </label> {{data[0].Flight_Number}}
     </fieldset>
     <div class="btnBlock">
         <input class="btn" type="submit" id="DeleteSeat" value="Delete Seat">
