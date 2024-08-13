@@ -3,6 +3,7 @@
 -- -----------------------------------------------------
 -- Group 3 Airplane Reservation System
 -- Authors: Andrew Chi, Eric McElhinny
+-- This file details the creation of 6 tables to implement the flight tracking system and populates each with example data
 -- -----------------------------------------------------
 
 SET AUTOCOMMIT = 0;
@@ -93,9 +94,6 @@ VALUES
         (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "MDT"),
         (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = "CAI"),
         (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = "Boeing 747"));
-
-SELECT * FROM Flights 
-WHERE Origin_Airport_ID IN (SELECT Airport_ID FROM Airports WHERE Airport_Country = 'Japan');
 
 -- -----------------------------------------------------
 -- Table `Travel_Classes`

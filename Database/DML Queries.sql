@@ -1,4 +1,5 @@
--- Active: 1720982518894@@127.0.0.1@3306@step3ddl
+-- Data Manipulation Queries
+-- Group 3: Eric McElhinny, Andrew Chi
 
 -- Airports
 -- Create a new Airport
@@ -9,9 +10,16 @@ VALUES (:AirportName, :City, :Country);
 -- Read all airports
 SELECT * FROM airports;
 
+-- Return a specific Airport
+-- Variables: :ID
+SELECT * FROM Airports WHERE Airport_ID = :ID;
+
 -- Read airports with a country filter
 -- Variables: :Country
 SELECT * FROM airports WHERE `Airport_Country` = :Country;
+
+-- Populate country filter
+SELECT DISTINCT Airport_Country FROM Airports;
 
 -- Update an airport
 -- Variables: :AirportName, :City, :Country, :AirportID
@@ -33,6 +41,10 @@ VALUES (:TCName, :Cost);
 
 -- Read all travel classes
 SELECT * FROM travel_classes;
+
+-- Return a specific travel class
+-- Variables: :ID
+SELECT * FROM Travel_Classes WHERE Travel_Class_ID = :ID;
 
 -- Update a travel class
 -- Variables: :TCName, :Cost :TCID
@@ -63,6 +75,9 @@ WHERE `Airplane_Type_ID` = :ATID;
 -- Variables: :ATID
 DELETE FROM airplane_types WHERE `Airplane_Type_ID` = :ATID;
 
+--Populate travel class dropdown
+SELECT Travel_Class_ID FROM Airplane_Travel_Classes;
+
 -- Airplane Travel Class
 -- Create a new airplane travel class
 -- Variables: :APType, :TravelClass, :Capacity
@@ -89,16 +104,13 @@ SELECT
     `Travel_Class_ID`,
     TC.`Travel_Class_Name`,
     `Travel_Class_Capacity`,
-FROM airplane_travel_classes
-INNER JOIN airplane_types AS APT ON `APT`.`Airplane_Type_ID`=airplane_travel_classes.`Airplane_Type_ID`
-INNER JOIN travel_classes AS TC ON TC.`Travel_Class_ID` = airplane_travel_classes.`Travel_Class_ID`;
+FROM
+    airplane_travel_classes
+    INNER JOIN airplane_types AS APT ON `APT`.`Airplane_Type_ID` = airplane_travel_classes.`Airplane_Type_ID`
+    INNER JOIN travel_classes AS TC ON TC.`Travel_Class_ID` = airplane_travel_classes.`Travel_Class_ID`
+ORDER BY APT.`Airplane_Type` ASC;
 
--- Read all travel classes for a specific airplane type
--- Variables: :APType
-SELECT * 
-FROM airplane_travel_classes 
-INNER JOIN airplane_types ON airplane_travel_classes.`Airplane_Type_ID` = airplane_types.`Airplane_Type_ID`
-WHERE airplane_types.`Airplane_Type` = :APType;
+;
 
 -- Update an airplane travel class
 -- Variables: :Capacity, :ATCID
@@ -127,27 +139,28 @@ INSERT INTO `Flights` (
     (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type)
 );
 
--- Retrieve all flights from a specific airport
--- Note we want to have the FKs for lookups later but they will not be displayed
--- Variable: :Origin
-SELECT 
-    `Flight_ID`,
-    `Departure_Date_Time` ,
-    `Arrival_Date_Time` ,
-    `Origin_Airport_ID`,
-    OG.`Airport_Name`,
-    `Destination_Airport_ID`,
-    DEST.`Airport_Name`,
-    APT.`Airplane_Type`,
-    `Airplane_Type_ID`
+-- Retrieve all flights
+SELECT
+    `Flight_ID` AS Flight_Number,
+    `Departure_Date_Time` AS Departure,
+    `Arrival_Date_Time` AS Arrival,
+    OA.`Airport_Name` AS Origin,
+    DA.`Airport_Name` AS Destination,
+    airplane.`Airplane_Type` AS Airplane
+FROM
+    Flights
+    INNER JOIN airports AS OA ON `Flights`.`Origin_Airport_ID` = OA.`Airport_ID`
+    INNER JOIN airports AS DA ON `Flights`.`Destination_Airport_ID` = DA.`Airport_ID`
+    INNER JOIN airplane_types AS airplane ON `Flights`.`Airplane_Type_ID` = airplane.`Airplane_Type_ID`
+ORDER BY Flight_Number ASC
+    -- Retrieve all flight numbers
+SELECT `Flight_ID`
 FROM `Flights`
-INNER JOIN airports AS OG ON `Flights`.`Origin_Airport_ID` = airports.`Airport_ID`
-INNER JOIN airports AS DEST ON `Flights`.`Destination_Airport_ID`=airports.`Airport_ID`
-INNER JOIN airplane_types AS APT ON `Flights`.`Airplane_Type_ID` = APT.`Airplane_Type_ID`
-WHERE `Origin_Airport_ID` = :Origin_Airport_ID;
-
--- Retrieve all flight numbers
-SELECT `Flight_ID` FROM `Flights`
+    -- Retrieve all airport names
+SELECT Airport_Name
+FROM Airports;
+--Retrieve all airplane types
+SELECT Airplane_Type FROM Airplane_Types;
 -- Update a flight
 -- Variables :Departure, :Arrival, :Origin, :Destination, :Airplane_Type, :Flight
 UPDATE `Flights` 
@@ -158,26 +171,13 @@ SET `Departure_Date_Time` = :Departure,
     `Airplane_Type_ID` = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type)
 WHERE `Flight_ID` = :Flight;
 
--- Retrieve all flights from a specific airport
--- Variable: :Origin
-SELECT *
-FROM `Flights`
-INNER JOIN airports ON `Flights`.`Origin_Airport_ID`=airports.`Airport_ID`
-WHERE airports.`Airport_Name` = :Origin;
+-- Retrieve a newly created flight
+-- Variables: :Departure, :Arrival, :Origin, :Destination, :Airplane_Type
+SELECT Flight_ID FROM `Flights` WHERE Departure_Date_Time = :Departure AND Arrival_Date_Time = :Arrival AND Origin_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Origin) AND Destination_Airport_ID = (SELECT `Airport_ID` FROM `Airports` WHERE `Airport_Name` = :Destination) AND Airplane_Type_ID = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type);
 
--- Retrieve all flights to a specific airport
--- Variable: :Destination
-SELECT *
-FROM `Flights`
-INNER JOIN airports ON `Flights`.`Destination_Airport_ID`=airports.`Airport_ID`
-WHERE airports.`Airport_Name` = :Destination;
-
--- Retrieve all flights in a specific duration
--- Variable: :Departure, :Arrival
-SELECT *
-FROM `Flights`
-WHERE `Departure_Date_Time` >= :Departure AND `Arrival_Date_Time` <= :Arrival
-
+-- Retrieve all capacities for a given airplane
+-- Variables: :Airplane_Type
+SELECT ACT.`Travel_Class_ID`, ACT.`Travel_Class_Capacity` FROM airplane_travel_classes AS ACT INNER JOIN airplane_types AS APT ON ACT.`Airplane_Type_ID` = APT.`Airplane_Type_ID` WHERE APT.Airplane_Type = :Airplane_Type
 -- Update a flight
 -- Variables: :Departure, :Arrival, :Origin, :Destination, :Airplane_Type, :Flight
 UPDATE `Flights` 
@@ -188,13 +188,10 @@ SET `Departure_Date_Time` = :Departure,
     `Airplane_Type_ID` = (SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = :Airplane_Type)
 WHERE `Flight_ID` = :Flight
 
-
 -- Delete a flight
 -- Variable: :Flight_ID
 -- Ensure deleting a flight also deletes associated seats
 DELETE FROM `Flights` WHERE `Flight_ID` = :Flight_ID;
-
-DELETE FROM `Seats` WHERE `Flight_ID` = :Flight_ID;
 
 -- Seats
 -- Insert a new seat
@@ -208,6 +205,24 @@ VALUES (
     :Passenger_Name
 );
 
+-- Retrieve all seats
+SELECT
+    `Seat_ID`,
+    TC.`Travel_Class_Name` AS Class,
+    `Flight_ID` AS Flight_Number,
+    `Seat_Number`,
+    CASE
+        WHEN `Available` = '0' THEN 'False'
+        ELSE 'True'
+    END AS Available,
+    `Passenger_Name`
+FROM seats
+    LEFT JOIN travel_classes AS TC ON seats.`Travel_Class_ID` = `TC`.`Travel_Class_ID`
+ORDER BY Flight_Number ASC;
+
+-- Retrieve all seats for a flight
+-- Variables: :FlightID
+SELECT `Seat_ID`, TC.`Travel_Class_Name` AS Class, `Flight_ID` AS Flight_Number, `Seat_Number`, CASE WHEN `Available` = '0' THEN 'False' ELSE 'True' END AS Available, `Passenger_Name` FROM seats INNER JOIN travel_classes AS TC ON seats.`Travel_Class_ID`=`TC`.`Travel_Class_ID` WHERE Flight_ID = :FlightID ORDER BY Flight_Number ASC;
 -- Update seat availability
 -- Variables: :Seat_Number, :Flight_ID, :Passenger_Name
 
@@ -215,61 +230,6 @@ UPDATE `Seats`
 SET `Available` = 0, `Passenger_Name` = :Passenger_Name
 WHERE `Seat_Number` = :Seat_Number AND `Flight_ID` = :Flight_ID;
 
--- Find all available seats on a specific flight
--- Variable: :Flight_ID
-
-SELECT 
-    `Seat_ID`,
-    `Travel_Class_ID`,
-    TC.`Travel_Class_Name`,
-    `Seat_Number`,
-    `Available`,
-    `Passenger_Name` 
-FROM `Seats`
-INNER JOIN travel_classes AS TC ON `Seats`.`Travel_Class_ID`=TC.`Travel_Class_ID`
-WHERE `Flight_ID` = :Flight_ID AND `Available` = 1;
-
 -- Delete a seat
 -- Variable: :Seat_ID
 DELETE FROM `Seats` WHERE `Seat_ID` = :Seat_ID;
-
--- List all airports in a specific country
--- Variable: :Airport_Country
-
-SELECT * FROM `Airports` WHERE `Airport_Country` = :Airport_Country;
-
--- Calculate total seats sold for a specific flight
--- Variable: :Flight_ID
-
-SELECT COUNT(*) AS `Total_Seats_Sold`
-FROM `Seats`
-WHERE `Flight_ID` = :Flight_ID AND `Available` = 0;
-
--- Retrieve all flights with a specific airplane type
--- Variable: :Airplane_Type_ID
-
-SELECT * FROM `Flights` WHERE `Airplane_Type_ID` = :Airplane_Type_ID;
-
--- Retrieve all travel classes for a specific airplane type
--- Variable: :Airplane_Type_ID
-
-SELECT `tc`.`Travel_Class_Name`, `atc`.`Travel_Class_Capacity`
-FROM `Airplane_Travel_Classes` `atc`
-JOIN `Travel_Classes` `tc` ON `atc`.`Travel_Class_ID` = `tc`.`Travel_Class_ID`
-WHERE `atc`.`Airplane_Type_ID` = :Airplane_Type_ID;
-
--- Retrieve all flights between two airports
--- Variables: :Origin_Airport_ID, :Destination_Airport_ID
-
-SELECT *
-FROM `Flights`
-WHERE `Origin_Airport_ID` = :Origin_Airport_ID
-  AND `Destination_Airport_ID` = :Destination_Airport_ID;
-
--- Update flight time
--- Variables: :Departure_Date_Time, :Arrival_Date_Time, :Flight_ID
-
-UPDATE `Flights`
-SET `Departure_Date_Time` = :Departure_Date_Time,
-    `Arrival_Date_Time` = :Arrival_Date_Time
-WHERE `Flight_ID` = :Flight_ID;

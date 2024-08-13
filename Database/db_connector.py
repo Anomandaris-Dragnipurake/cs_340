@@ -1,15 +1,8 @@
+""" The database connector code is taken entirely from the starter app code for cs_340
+Date 7/25/2024
+https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master  """
 import MySQLdb
 import os
-#from dotenv import load_dotenv, find_dotenv
-
-# Load our environment variables from the .env file in the root of our project.
-#load_dotenv(find_dotenv())
-
-# Set the variables in our application with those environment variables
-#host = os.environ.get("340DBHOST")
-#user = os.environ.get("340DBUSER")
-#passwd = os.environ.get("340DBPW")
-#db = os.environ.get("340DB")
 
 host = 'localhost'
 user = 'root'    

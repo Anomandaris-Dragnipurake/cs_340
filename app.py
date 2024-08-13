@@ -1,6 +1,7 @@
+
 """ The following python is derived from the starter app code for cs_340
 Date 7/25/2024
-Derived from the example structure of python
+Derived from the example structure of python. The general structure of Read, Create, Update, Delete and which routes use GET/POST was used as inspiration. The Dropdown logic and redirection was our own. The intersection of airplane types and travel classes as well as the flights and seats was our own. 
 https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master """
 from flask import Flask, render_template, json, request, redirect, url_for
 from flask_mysqldb import MySQL
@@ -226,7 +227,7 @@ def airplane_admin():
     pgOption = "browseForm()"
 
     if request.method == "GET":
-        query = "SELECT * FROM Airplane_Types;"  # Replace with true query later
+        query = "SELECT * FROM Airplane_Types;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         results = cursor.fetchall()
         return render_template("airplane_admin.j2", data=results, pgOption=pgOption)
@@ -238,13 +239,13 @@ def airplane_admin():
         cursor = db.execute_query(
             db_connection=db_connection, query=query, query_params=(cAName,))
 
-        tcQuery = "SELECT Travel_Class_ID FROM Airplane_Travel_Classes;"
+        tcQuery = "SELECT DISTINCT Travel_Class_ID FROM Airplane_Travel_Classes;"
         cursor = db.execute_query(db_connection=db_connection, query=tcQuery)
         tcIds = cursor.fetchall()
         for tcId in tcIds:
             query = "INSERT INTO airplane_travel_classes (`Airplane_Type_ID`, `Travel_Class_ID`, `Travel_Class_Capacity`) VALUES ((SELECT `Airplane_Type_ID` FROM `Airplane_Types` WHERE `Airplane_Type` = %s), %s, %s);"
             cursor = db.execute_query(
-                db_connection=db_connection, query=query, query_params=(cAName, tcId, 0))
+                db_connection=db_connection, query=query, query_params=(cAName, tcId['Travel_Class_ID'], 0))
         return redirect("/airplane-admin")
 
 
@@ -431,7 +432,7 @@ def airplanetravelclass_admin():
         cursor = db.execute_query(db_connection=db_connection, query=query)
         getATResults = cursor.fetchall()
 
-        query = "SELECT DISTINCT Travel_Class_Name FROM Travel_Classes;"
+        query = "SELECT Travel_Class_Name FROM Travel_Classes;"
         cursor = db.execute_query(db_connection=db_connection, query=query)
         getTCResults = cursor.fetchall()
 
